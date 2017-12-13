@@ -10,8 +10,6 @@ class Komponente{
 	public Komponente(String name, double MTTF, double MTTR){
 		this.name = name; this.MTTF = MTTF; this.MTTR = MTTR;
 	}
-
-
 }
 
 class Element extends Komponente{
