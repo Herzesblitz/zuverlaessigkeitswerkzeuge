@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 
-import sun.awt.RepaintArea;
+//import sun.awt.RepaintArea;
 
 abstract class _2DObject{
 	
@@ -80,14 +80,10 @@ public class MainFrame extends JFrame{
 	public static void main(String[] args) {
 		 // TODO code application logic here
 		frame.init_frame(600,800);
-
 		
 		frame.test(); 
+		System.out.println(frame.jc.zeichnen.size());
 		frame.zeichneObjekte(frame.jc);
-		
-		
-		
-		
 	}
 	
 	public  void init_frame(int height, int width) {
