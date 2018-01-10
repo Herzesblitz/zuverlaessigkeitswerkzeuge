@@ -79,6 +79,7 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
+		System.out.println("test");
 		frame.init_frame(600,800);
 		
 		frame.test(); 
