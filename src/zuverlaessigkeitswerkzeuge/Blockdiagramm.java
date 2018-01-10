@@ -1,5 +1,7 @@
 package zuverlaessigkeitswerkzeuge;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class Komponente{
 	String name;
@@ -13,7 +15,11 @@ class Komponente{
 }
 
 class Element extends Komponente{
-
+	Color black = Color.BLACK;
+	Color blue = Color.blue;
+	Block block = new Block(0, 0, 500, 500,blue);
+	ArrayList<Line> lines = new ArrayList<>(Arrays.asList(new Line(0, 0, 0, 0, blue)));
+	
 	public Element(String name, double MTTF, double MTTR) {
 		super(name, MTTF, MTTR);
 		zuverlassigkeit(0);
