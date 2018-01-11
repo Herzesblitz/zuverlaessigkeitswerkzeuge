@@ -2,8 +2,12 @@ package zuverlaessigkeitswerkzeuge;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -72,7 +76,7 @@ class JCanvas extends JComponent
  }
 
 public class MainFrame extends JFrame{
-
+	int posX; int posY;
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	
@@ -80,7 +84,7 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
-		frame.init_frame(600,800);
+		frame.init_frame();
 
 		
 		frame.test(); 
@@ -91,11 +95,21 @@ public class MainFrame extends JFrame{
 		
 	}
 	
-	public  void init_frame(int height, int width) {
+	public  void init_frame() {
+			 addMouseMotionListener(new MouseMotionAdapter() {
+		            public void mouseMoved(final MouseEvent e) {
+		                posX = e.getX();
+		                posY = e.getY();
+		                //System.out.println("a:"+posX+" "+posY);
+		            }
+		     });
+		
+		    Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
+
 		    frame.setTitle("Zuverlässigkeitswerkzeuge");
-		    frame.setSize(width, height);
+		    frame.setSize(aufloesung.width, aufloesung.height);
 		    frame.setResizable(false);
-		    frame.setLocation(50, 50);
+		    frame.setLocation(0, 0);
 		    frame.setVisible(true);	
 		    	
 	}
