@@ -15,9 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import com.sun.javafx.geom.ConcentricShapePair;
 
-import sun.awt.RepaintArea;
+//import sun.awt.RepaintArea;
 
 abstract class _2DObject{
 	
@@ -84,15 +83,17 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
+<<<<<<< HEAD
 		frame.init_frame();
 
+=======
+		System.out.println("test");
+		frame.init_frame(600,800);
+>>>>>>> 6909cd9a9b403103f2ace5e2e02e3eb78f36558b
 		
 		frame.test(); 
+		System.out.println(frame.jc.zeichnen.size());
 		frame.zeichneObjekte(frame.jc);
-		
-		
-		
-		
 	}
 	
 	public  void init_frame() {
