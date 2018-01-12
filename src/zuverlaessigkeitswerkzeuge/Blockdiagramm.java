@@ -213,7 +213,8 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 
 
 public class Blockdiagramm {
-
+	Struktur anfang = new Struktur(new ArrayList<Komponente>(), "");
+	
 	public static void main(String[] args) {
 		//main computer
 			Element cpu = new Element("CPU", 1950, 1.2);

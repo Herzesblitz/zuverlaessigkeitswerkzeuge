@@ -3,7 +3,11 @@ package zuverlaessigkeitswerkzeuge;
 import java.awt.Color;
 import java.util.ArrayList;
 
+//Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass {
+	
+	static int maxheigth_el=0;
+	static int maxwidth_el=0;
 	
 	int height = 600;
 	int width = 800;
@@ -16,11 +20,12 @@ public class MainClass {
 		MainClass mc = new MainClass();
 //		mc.mf.init_frame();
 //		mc.test_zeichnen();
-		mc.initFrame();
-		mc.test_blockdiagramm();
+		
+		mc.test_zeichnen();;
 	}
 	
 	private void test_zeichnen() {
+		mf.init_frame();
 		Color red = Color.red;
     	Block b2 = new Block(100, 100, 200, 200,red);
 	    mf.jc.zeichnen.add(b2);
@@ -50,6 +55,26 @@ public class MainClass {
 		zeichnen(sr);
 	}
 	
+	private void setDimensions(Struktur S, int heigth, int width) {
+		for(int i=0; i<S.s.size(); i++) {
+			Komponente k = S.s.get(i);
+			if(k instanceof Struktur) {
+				if(k instanceof Serielle_struktur) {
+					setDimensions(((Struktur) k),heigth,(4/5)*width/S.s.size());
+				}
+				if(k instanceof Parallel_struktur) {
+					setDimensions(((Struktur) k),(4/5)*heigth/S.s.size(),width);
+				}
+			}
+			if(k instanceof Element) {
+			    mf.jc.zeichnen.add(((Element) k).block);
+			    for(Line l: ((Element) k).lines) {
+				    mf.jc.zeichnen.add(l);	
+			    }
+			}
+		}
+	}
+	
 	private void setCoordinates(Struktur S, int x, int y, int heigth, int width) {
 		for(int i=0; i<S.s.size(); i++) {
 			Komponente k = S.s.get(i);
@@ -70,6 +95,14 @@ public class MainClass {
 		}
 	}
 	
+	
+	private void serielleStrutur_einf(String name) {
+		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name));
+	}
+	private void parallelStrutur_einf(int anz, int String name) {
+		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name));
+	}
+	
 
 	private void zeichnen(Struktur S) {
 		for(Komponente k: S.s) {
@@ -86,10 +119,6 @@ public class MainClass {
 		System.out.println(((Block) mf.jc.zeichnen.get(2)).x);
 		mf.zeichneObjekte(mf.jc);
 	}
-	
-	private void initFrame() {
-		mf.init_frame(height, width);
-	}
-	
+		
 
 }
