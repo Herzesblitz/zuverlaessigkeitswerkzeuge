@@ -79,11 +79,9 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
-		System.out.println("test");
 		frame.init_frame(600,800);
 		
 		frame.test(); 
-		System.out.println(frame.jc.zeichnen.size());
 		frame.zeichneObjekte(frame.jc);
 	}
 	
@@ -107,11 +105,10 @@ public class MainFrame extends JFrame{
 	}
 	
 	public void zeichneObjekte(JCanvas jc) {
-		System.out.println(jc.zeichnen.size());
-		for(_2DObject d: jc.zeichnen) {
-			if(d instanceof Block)System.out.println(((Block) d).x);
-			if(d instanceof Line)System.out.println(((Line) d).x1);
-		}
+//		for(_2DObject d: jc.zeichnen) {
+//			if(d instanceof Block)System.out.println(((Block) d).x);
+//			if(d instanceof Line)System.out.println(((Line) d).x1);
+//		}
 		frame.getContentPane().add(jc);
 		frame.repaint();
 	}
