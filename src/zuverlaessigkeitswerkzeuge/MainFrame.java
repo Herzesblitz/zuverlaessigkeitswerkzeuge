@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ class JCanvas extends JComponent
  }
 
 public class MainFrame extends JFrame{
-	int posX; int posY;
+	int posX; int posY; char keyTyped;
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	
@@ -83,16 +85,10 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
+
 		frame.init_frame();
 
-=======
 		System.out.println("test");
->>>>>>> f7837798a78a8944b7d57e295f4b5dacbbdd731c
-		frame.init_frame(600,800);
->>>>>>> 6909cd9a9b403103f2ace5e2e02e3eb78f36558b
 		
 		frame.test(); 
 		frame.zeichneObjekte(frame.jc);
@@ -106,6 +102,26 @@ public class MainFrame extends JFrame{
 		                //System.out.println("a:"+posX+" "+posY);
 		            }
 		     });
+			 addKeyListener(new KeyListener() {
+				
+				@Override
+				public void keyTyped(KeyEvent e) {
+					// TODO Auto-generated method stub
+					System.out.println(e.getKeyChar());
+				}
+				
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void keyPressed(KeyEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		
 		    Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 

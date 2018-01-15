@@ -15,13 +15,16 @@ class Komponente{
 }
 
 class Element extends Komponente{
+	Struktur parent;
+
 	Color black = Color.BLACK;
 	Color blue = Color.blue;
 	Block block = new Block(0, 0, 500, 500,blue);
 	ArrayList<Line> lines = new ArrayList<>(Arrays.asList(new Line(0, 0, 0, 0, blue)));
 	
-	public Element(String name, double MTTF, double MTTR) {
+	public Element(String name, double MTTF, double MTTR, Struktur parent) {
 		super(name, MTTF, MTTR);
+		this.parent = parent;
 		zuverlassigkeit(0);
 		berechne_verfuegbarkeit();
 		berechne_MTBF();
@@ -51,11 +54,17 @@ class Struktur extends Komponente{
 	public Struktur(ArrayList<Komponente> k, String name){
 		super(name, 0, 0);
 		this.s = k;
-		berechne_MTTF();
+
+	}
+	
+	public void berechneWerte() {
+		
 		berechne_MTTR();
+		berechne_MTTF();
 	}
 	
 	public void ausgabe_werte(){
+		berechneWerte();
 		System.out.println("name: "+this.name);
 		System.out.println("mttf: "+this.MTTF);
 		System.out.println("mttr: "+this.MTTR);
@@ -80,15 +89,20 @@ class Struktur extends Komponente{
  
 
 class Parallel_struktur extends Struktur{
+	Struktur parent;
 	
-	public Parallel_struktur(ArrayList<Komponente> k, String name){
+	public Parallel_struktur(ArrayList<Komponente> k, String name, Struktur parent){
 		super(k, name);
+		this.parent = parent;
+		
+
+	}
+	
+	public void berechneWerte() {
 		berechne_zuverlassigkeit();
 		berechne_MTTR();
-
 		berechne_verfuegbarkeit();
 		berechne_MTTF();
-
 	}
 	
 	public void berechne_zuverlassigkeit() {
@@ -125,11 +139,20 @@ class Parallel_struktur extends Struktur{
 }
 
 class Serielle_struktur extends Struktur{
-	public Serielle_struktur(ArrayList<Komponente> k, String name){
+	Struktur parent;
+
+	public Serielle_struktur(ArrayList<Komponente> k, String name, Struktur parent){
 		super(k, name);
-		berechne_zuverlassigkeit(0);
-		berechne_verfuegbarkeit();
+		
+		this.parent = parent;
+		
+	}
+	
+	public void berechneWerte() {
+		this.berechne_verfuegbarkeit();
+		berechne_MTTF();
 		berechne_MTTR();
+		berechne_zuverlassigkeit(0);
 	}
 
 	public void berechne_zuverlassigkeit(int t) {
@@ -164,16 +187,29 @@ class Serielle_struktur extends Struktur{
 
 class K_aus_N_struktur_gleichwertig extends Struktur{
 	int k;
-
-	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> K, String name, int k) {
+	Struktur parent;
+	
+	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> K, String name, int k, Struktur parent) {
 		super(K, name);
 		this.k = k;
+		this.parent = parent;
+		
+		
+//		super(k, name);
+//		this.parent = parent;
+//		berechne_zuverlassigkeit();
+//		berechne_MTTR();
+//
+//		berechne_verfuegbarkeit();
+//		berechne_MTTF();
+	}
+	
+
+	public void berechneWerte() {
 		berechne_zuverlassigkeit();
+		berechne_MTTR();
 		verfuegbarkeit();
 		berechne_MTTF();
-		berechne_MTTR();
-
-	
 	}
 	
 	int fak(int a){	
@@ -213,54 +249,70 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 
 
 public class Blockdiagramm {
-	Struktur anfang = new Struktur(new ArrayList<Komponente>(), "");
+	static Komponente zeiger = new Komponente("", 1, 1); 
+	static Struktur anfang = new Struktur(new ArrayList<Komponente>(), "");
+	
+	public static Element sucheStruktur(Struktur a, int x, int y) {	
+		for(Komponente k: a.s) {
+			if(k instanceof Element) {
+				if(y >= ((Element) k).block.y && y <= ((Element) k).block.y + ((Element) k).block.height) {
+					if(x >= ((Element) k).block.x && x <= ((Element) k).block.x + ((Element) k).block.width) {
+						return (Element) k;
+					}
+				}
+			}
+			else {
+				sucheStruktur(a, x, y);
+			}
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) {
+		ArrayList<Komponente> k_s=new ArrayList<Komponente>(); 
+		Serielle_struktur system = new Serielle_struktur(k_s, "system", anfang);
+
 		//main computer
-			Element cpu = new Element("CPU", 1950, 1.2);
-			Element mem = new Element("memory", 1500, 2.0);
-			Element con = new Element("console", 3800, 0.8);
-			ArrayList<Komponente> k_mc=new ArrayList<Komponente>(); 
+		ArrayList<Komponente> k_mc=new ArrayList<Komponente>(); 
+		Serielle_struktur main_computer = new Serielle_struktur(k_mc, "main computer", system);
+			Element cpu = new Element("CPU", 1950, 1.2, main_computer);
+			Element mem = new Element("memory", 1500, 2.0, main_computer);
+			Element con = new Element("console", 3800, 0.8, main_computer);
 			k_mc.add(cpu); 
 			k_mc.add(mem); 
 			k_mc.add(con); 
-		Serielle_struktur main_computer = new Serielle_struktur(k_mc, "main computer");
+		main_computer.berechneWerte();
 		main_computer.ausgabe_werte();
 		
 		//power
-			Element ups1 = new Element("ups1", 15800, 3.75);
-			Element ut = new Element("utility", 460, 0.5);
-			ArrayList<Komponente> k_p =new ArrayList<Komponente>(); 
+		ArrayList<Komponente> k_p =new ArrayList<Komponente>(); 
+		Parallel_struktur power = new Parallel_struktur(k_p, "power", system);
+			Element ups1 = new Element("ups1", 15800, 3.75, power);
+			Element ut = new Element("utility", 460, 0.5, power);
 			k_p.add(ups1); 
 			k_p.add(ups1); 
 			k_p.add(ut);
-		Parallel_struktur power = new Parallel_struktur(k_p, "power");
 		power.ausgabe_werte();
 		
 		//disks
-			Element d1 = new Element("disk1",1800,4.5);
-			ArrayList<Komponente> k_d =new ArrayList<Komponente>(); 
-			d1.set_zuverlassigkeit(0.9);
+		ArrayList<Komponente> k_d =new ArrayList<Komponente>(); 
+		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", 3, system);
+			Element d1 = new Element("disk1",1800,4.5, disks);
 			k_d.add(d1);			
 			k_d.add(d1);
 			k_d.add(d1);
 			k_d.add(d1);
-		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", 3);
+		d1.set_zuverlassigkeit(0.9);
+		disks.berechneWerte();
 		disks.ausgabe_werte();
 
 		//gesamtsystem
-		ArrayList<Komponente> k_s = new ArrayList<Komponente>();
 		k_s.add(disks);
 		k_s.add(power);
 		k_s.add(main_computer);
-		Serielle_struktur system = new Serielle_struktur(k_s, "system");
 		system.ausgabe_werte();
 	}
 	
 	
 	
-	private void test(){
-		
-	}
-
 }

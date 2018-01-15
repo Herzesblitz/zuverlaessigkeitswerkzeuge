@@ -96,11 +96,44 @@ public class MainClass {
 	}
 	
 	
+	//nur am Anfang verwenden  
 	private void serielleStrutur_einf(String name) {
-		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name));
+		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name, bd.anfang));
 	}
-	private void parallelStrutur_einf(int anz, int String name) {
-		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name));
+	
+	//nur am Anfang verwenden  
+	private void parallelStrutur_einf(int anz, String name) {
+		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name, bd.anfang));
+	}
+	
+	private void serielleStrutur_einf(String name, int x, int y) {
+		bd.zeiger = Blockdiagramm.sucheStruktur(bd.anfang, x, y);
+		if(bd.zeiger instanceof Element) {
+			ArrayList<Komponente> liste = ((ArrayList<Komponente>) ((Element) bd.zeiger).parent.s);
+			for(int i=0; i<liste.size(); i++){
+				if(liste.get(i).equals(bd.zeiger)) {
+					if(i>0 || i<liste.size()-1 ) {
+						System.err.println("Kann keine serielle Struktur in einer seriellen Struktur einfuegen!");
+					}
+					else {
+						if(i == 0) {
+							
+						}
+						if(i == liste.size()-1)
+					}
+				}
+ 
+				
+			}
+		}
+		else if(bd.zeiger instanceof Struktur) {
+			
+		}
+		
+	}
+	
+	private void paralleleStrutur_einf(String name, int x, int y) {
+		bd.zeiger = Blockdiagramm.sucheStruktur(bd.anfang, x, y);
 	}
 	
 
