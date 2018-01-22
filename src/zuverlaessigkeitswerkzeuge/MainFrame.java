@@ -6,8 +6,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+<<<<<<< HEAD
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+=======
+>>>>>>> ce565b43bee7a2386a082da7fe72229c697a8747
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -80,12 +83,18 @@ class JCanvas extends JComponent
    
    
  }
+<<<<<<< HEAD
 public class MainFrame extends JFrame implements KeyListener,ActionListener{
 	int posX; int posY;
 	//KL Teil
 		JTextArea displayArea;
 	    JTextField typingArea;
 	
+=======
+
+public class MainFrame extends JFrame{
+	int posX; int posY; char keyTyped;
+>>>>>>> ce565b43bee7a2386a082da7fe72229c697a8747
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	
@@ -93,11 +102,19 @@ public class MainFrame extends JFrame implements KeyListener,ActionListener{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
+<<<<<<< HEAD
 		
 		
 		frame.init_frame();
 
 		System.out.println("test");		
+=======
+
+		frame.init_frame();
+
+		System.out.println("test");
+		
+>>>>>>> ce565b43bee7a2386a082da7fe72229c697a8747
 		frame.test(); 
 		frame.zeichneObjekte(frame.jc);
 		
@@ -112,7 +129,30 @@ public class MainFrame extends JFrame implements KeyListener,ActionListener{
 		                //System.out.println("a:"+posX+" "+posY);
 		            }
 		     });
+<<<<<<< HEAD
 		        
+=======
+			 addKeyListener(new KeyListener() {
+				
+				@Override
+				public void keyTyped(KeyEvent e) {
+					// TODO Auto-generated method stub
+					System.out.println(e.getKeyChar());
+				}
+				
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void keyPressed(KeyEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+>>>>>>> ce565b43bee7a2386a082da7fe72229c697a8747
 		
 			
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
