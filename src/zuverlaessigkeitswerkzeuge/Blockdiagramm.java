@@ -19,7 +19,7 @@ class Element extends Komponente{
 
 	Color black = Color.BLACK;
 	Color blue = Color.blue;
-	Block block = new Block(0, 0, 500, 500,blue);
+	Block block = new Block(0, 0, 100, 100,blue);
 	ArrayList<Line> lines = new ArrayList<>(Arrays.asList(new Line(0, 0, 0, 0, blue)));
 	
 	public Element(String name, double MTTF, double MTTR, Struktur parent) {
@@ -54,13 +54,32 @@ class Struktur extends Komponente{
 	public Struktur(ArrayList<Komponente> k, String name){
 		super(name, 0, 0);
 		this.s = k;
-
 	}
 	
 	public void berechneWerte() {
 		
 		berechne_MTTR();
 		berechne_MTTF();
+	}
+	
+	public void einfuegen(int index, Komponente k) {
+		index++;
+		if(index == s.size()-1)s.add(k);
+		else {
+			ArrayList<Komponente> s_ = new ArrayList<>();
+			for(int i=0; i<index; i++) s_.add(s.get(i));
+			s_.add(k);
+			for(int i=index; i<s.size(); i++) s_.add(s.get(i));
+			s = s_;
+		}
+	}
+	
+	public void loeschen(int index) {
+		if(index >= 0 && index < s.size()) s.remove(index);
+		else {
+			System.err.println("Komponente existiert nicht!");
+			System.exit(-1);
+		}
 	}
 	
 	public void ausgabe_werte(){
@@ -143,9 +162,7 @@ class Serielle_struktur extends Struktur{
 
 	public Serielle_struktur(ArrayList<Komponente> k, String name, Struktur parent){
 		super(k, name);
-		
 		this.parent = parent;
-		
 	}
 	
 	public void berechneWerte() {
@@ -252,21 +269,23 @@ public class Blockdiagramm {
 	static Komponente zeiger = new Komponente("", 1, 1); 
 	static Struktur anfang = new Struktur(new ArrayList<Komponente>(), "");
 	
-	public static Element sucheStruktur(Struktur a, int x, int y) {	
-		for(Komponente k: a.s) {
-			if(k instanceof Element) {
-				if(y >= ((Element) k).block.y && y <= ((Element) k).block.y + ((Element) k).block.height) {
-					if(x >= ((Element) k).block.x && x <= ((Element) k).block.x + ((Element) k).block.width) {
-						return (Element) k;
-					}
+	public static Element sucheElement(Komponente a, int x, int y) {
+		if(a instanceof Element) {
+			if(y >= ((Element) a).block.y && y <= ((Element) a).block.y + ((Element) a).block.height) {
+				if(x >= ((Element) a).block.x && x <= ((Element) a).block.x + ((Element) a).block.width) {
+					return (Element) a;
 				}
 			}
-			else {
-				sucheStruktur(a, x, y);
-			}
+			return null;
+		}
+		for(Komponente k: ((Struktur) a).s) {
+			Element e=sucheElement(k, x, y);
+			if(e==null) continue;
+			return sucheElement(k, x, y);
 		}
 		return null;
 	}
+	
 	
 	public static void main(String[] args) {
 		ArrayList<Komponente> k_s=new ArrayList<Komponente>(); 
@@ -276,8 +295,11 @@ public class Blockdiagramm {
 		ArrayList<Komponente> k_mc=new ArrayList<Komponente>(); 
 		Serielle_struktur main_computer = new Serielle_struktur(k_mc, "main computer", system);
 			Element cpu = new Element("CPU", 1950, 1.2, main_computer);
+			cpu.block.x = 0; cpu.block.y = 0;
 			Element mem = new Element("memory", 1500, 2.0, main_computer);
+			mem.block.x = 101; cpu.block.y = 0;
 			Element con = new Element("console", 3800, 0.8, main_computer);
+			con.block.x = 202; con.block.y = 0;
 			k_mc.add(cpu); 
 			k_mc.add(mem); 
 			k_mc.add(con); 
@@ -288,7 +310,11 @@ public class Blockdiagramm {
 		ArrayList<Komponente> k_p =new ArrayList<Komponente>(); 
 		Parallel_struktur power = new Parallel_struktur(k_p, "power", system);
 			Element ups1 = new Element("ups1", 15800, 3.75, power);
+			Element ups2 = new Element("ups2", 15800, 3.75, power);
+			ups1.block.x = 303; ups1.block.y = 0;
+			ups2.block.x = 303; ups2.block.y = 101;
 			Element ut = new Element("utility", 460, 0.5, power);
+			ut.block.x = 303; ut.block.y = 202;
 			k_p.add(ups1); 
 			k_p.add(ups1); 
 			k_p.add(ut);
@@ -298,11 +324,21 @@ public class Blockdiagramm {
 		ArrayList<Komponente> k_d =new ArrayList<Komponente>(); 
 		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", 3, system);
 			Element d1 = new Element("disk1",1800,4.5, disks);
+			Element d2 = new Element("disk2",1800,4.5, disks);
+			Element d3 = new Element("disk3",1800,4.5, disks);
+			Element d4 = new Element("disk4",1800,4.5, disks);
+			d1.block.x = 404; d1.block.y = 0;
+			d2.block.x = 404; d2.block.y = 101;
+			d3.block.x = 404; d3.block.y = 202;
+			d4.block.x = 404; d4.block.y = 303;
 			k_d.add(d1);			
-			k_d.add(d1);
-			k_d.add(d1);
-			k_d.add(d1);
+			k_d.add(d2);
+			k_d.add(d3);
+			k_d.add(d4);
 		d1.set_zuverlassigkeit(0.9);
+		d2.set_zuverlassigkeit(0.9);
+		d3.set_zuverlassigkeit(0.9);
+		d4.set_zuverlassigkeit(0.9);
 		disks.berechneWerte();
 		disks.ausgabe_werte();
 
@@ -310,7 +346,11 @@ public class Blockdiagramm {
 		k_s.add(disks);
 		k_s.add(power);
 		k_s.add(main_computer);
+		anfang.s.add(system);
 		system.ausgabe_werte();
+		
+		
+		System.out.println(sucheElement(system, 450, 250).name);
 	}
 	
 	

@@ -21,11 +21,11 @@ public class MainClass {
 //		mc.mf.init_frame();
 //		mc.test_zeichnen();
 		
-		mc.test_zeichnen();;
+		mc.test_blockdiagramm();
 	}
 	
 	private void test_zeichnen() {
-		mf.init_frame();
+		
 		Color red = Color.red;
     	Block b2 = new Block(100, 100, 200, 200,red);
 	    mf.jc.zeichnen.add(b2);
@@ -34,25 +34,9 @@ public class MainClass {
 	}
 	
 	private void test_blockdiagramm() {
-		ArrayList<Komponente> k = new ArrayList<>();
-		Element k1 = new Element("k1", 1, 1);
-		Element k2 = new Element("k2", 1, 1);
-		k1.block.x = 0; k1.block.y = (height/2)-50; k1.block.width = 200; k1.block.height = 100; 
-		k.add(k1);
-		k2.block.x = 266; k2.block.y = height/2-50; k2.block.width = 200; k2.block.height = 100;
-		k2.lines.get(0).x1=200; k2.lines.get(0).y1=(height/2); k2.lines.get(0).x1=266; k2.lines.get(0).y2=(height/2);  
-		k.add(k2);		
-//
-//		ArrayList<Komponente> p_ = new ArrayList<>();
-//		p_.add(new Element("p1", 0, 0));
-//		p_.add(new Element("p2", 0, 0));	
-//		p_.add(new Element("p3", 0, 0));
-//		Parallel_struktur p = new Parallel_struktur(p_, "parallelstruktur");
-//		k.add(p);
-//		
-//		k.add((Struktur) new Komponente("k4", 0, 0));		
-		Serielle_struktur sr = new Serielle_struktur(k, "test");
-		zeichnen(sr);
+		ersteKomponente_einf("e1", 1, 1);
+
+		zeichnen(bd.anfang);
 	}
 	
 	private void setDimensions(Struktur S, int heigth, int width) {
@@ -95,49 +79,77 @@ public class MainClass {
 		}
 	}
 	
-	
-	//nur am Anfang verwenden  
-	private void serielleStrutur_einf(String name) {
-		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name, bd.anfang));
-	}
-	
-	//nur am Anfang verwenden  
-	private void parallelStrutur_einf(int anz, String name) {
-		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name, bd.anfang));
-	}
-	
-	private void serielleStrutur_einf(String name, int x, int y) {
-		bd.zeiger = Blockdiagramm.sucheStruktur(bd.anfang, x, y);
-		if(bd.zeiger instanceof Element) {
-			ArrayList<Komponente> liste = ((ArrayList<Komponente>) ((Element) bd.zeiger).parent.s);
-			for(int i=0; i<liste.size(); i++){
-				if(liste.get(i).equals(bd.zeiger)) {
-					if(i>0 || i<liste.size()-1 ) {
-						System.err.println("Kann keine serielle Struktur in einer seriellen Struktur einfuegen!");
-					}
-					else {
-						if(i == 0) {
-							
-						}
-						if(i == liste.size()-1)
-					}
-				}
- 
-				
-			}
+	//Blockdiagramm veraendern
+		
+		private void ersteKomponente_einf(String name, double MTTF, double MTTR) {
+			Element neu = new Element(name, MTTF, MTTR, bd.anfang);
+			bd.anfang.s.add(neu);
 		}
-		else if(bd.zeiger instanceof Struktur) {
-			
+	
+	//erweitert Komponente um Struktur
+	
+		private void aufStruktur_erweitern(String name, int x, int y) {
+			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			ArrayList<Komponente> k = new ArrayList<>(); k.add(e);
+			e.parent.s.add(new Serielle_struktur(k, name, e.parent));
 		}
 		
-	}
+		private void aufParalleleStruktur_erweitern(String name, int x, int y) {
+			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			ArrayList<Komponente> k = new ArrayList<>(); k.add(e);
+			e.parent.s.add(new Parallel_struktur(k, name, e.parent)); 
+		}
 	
-	private void paralleleStrutur_einf(String name, int x, int y) {
-		bd.zeiger = Blockdiagramm.sucheStruktur(bd.anfang, x, y);
-	}
+	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
+		/*
+		 * fuegt ein Element nach Position zu seriellen Struktur hinzu
+		 * Position wird durch klicken auf den Vorgaenger dieser indentifiziert
+		 */
+		private void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y) {
+			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			int pos = e.parent.s.indexOf(e);
+				Element neu = new Element(name, MTTF, MTTR, e.parent);
+				neu.block.x = x; neu.block.y = y;
+				neu.lines.add(new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, x, y+neu.block.height/2, Color.black));
+			e.parent.einfuegen(pos, neu);
+		}
+		
+		/*
+		 * loescht ein element von serieller Struktur 
+		 * Position wird durch klicken auf diesen indentifiziert
+		 */
+		private void serielleStruktur_verkleinern(int x, int y) {
+			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			int pos = e.parent.s.indexOf(e);
+			e.parent.loeschen(pos);
+		}
+		
+		/*
+		 * fuegt ein Element zu parallelen Struktur hinzu
+		 * Position wird durch klicken auf Element in pS indentifiziert
+		 */
+		private void parallelStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y) {
+			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			int pos = e.parent.s.indexOf(e);
+				Element neu = new Element(name, MTTF, MTTR, e.parent);
+				neu.block.x = x; neu.block.y = y;
+				neu.lines.add(new Line(e.block.x + e.block.width/2, e.block.y, neu.block.x + neu.block.width/2, neu.block.y + neu.block.height, Color.black));
+			e.parent.einfuegen(pos, neu);		
+		}
+		
+		/*
+		 * loescht ein element von parallel Struktur 
+		 * Position wird durch klicken auf diesen indentifiziert
+		 */
+		private void parallelStruktur_verkleinern(int x, int y) {
+			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			int pos = e.parent.s.indexOf(e);
+			e.parent.loeschen(pos);
+		}
 	
 
 	private void zeichnen(Struktur S) {
+		mf.init_frame();
 		for(Komponente k: S.s) {
 			if(k instanceof Struktur) {
 				zeichnen((Struktur) k);
@@ -149,7 +161,7 @@ public class MainClass {
 			    }
 			}
 		}
-		System.out.println(((Block) mf.jc.zeichnen.get(2)).x);
+		System.out.println("test");
 		mf.zeichneObjekte(mf.jc);
 	}
 		
