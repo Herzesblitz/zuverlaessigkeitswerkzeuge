@@ -1,7 +1,9 @@
 package zuverlaessigkeitswerkzeuge;
 
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
+
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass {
@@ -86,7 +88,18 @@ public class MainClass {
 			bd.anfang.s.add(neu);
 		}
 	
+<<<<<<< HEAD
 	//erweitert Komponente um Struktur
+=======
+	//nur am Anfang verwenden  
+	private void serielleStrutur_einf(String name) {
+		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name, bd.anfang));
+	}
+<<<<<<< HEAD
+	private void parallelStrutur_einf(int anz, String name) {
+		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name));
+=======
+>>>>>>> 34e69f8ead892b27eb895152430b34c42fd2a13c
 	
 		private void aufStruktur_erweitern(String name, int x, int y) {
 			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
@@ -124,6 +137,7 @@ public class MainClass {
 			e.parent.loeschen(pos);
 		}
 		
+<<<<<<< HEAD
 		/*
 		 * fuegt ein Element zu parallelen Struktur hinzu
 		 * Position wird durch klicken auf Element in pS indentifiziert
@@ -146,6 +160,14 @@ public class MainClass {
 			int pos = e.parent.s.indexOf(e);
 			e.parent.loeschen(pos);
 		}
+=======
+	}
+	
+	private void paralleleStrutur_einf(String name, int x, int y) {
+		bd.zeiger = Blockdiagramm.sucheStruktur(bd.anfang, x, y);
+>>>>>>> ce565b43bee7a2386a082da7fe72229c697a8747
+	}
+>>>>>>> 34e69f8ead892b27eb895152430b34c42fd2a13c
 	
 
 	private void zeichnen(Struktur S) {
