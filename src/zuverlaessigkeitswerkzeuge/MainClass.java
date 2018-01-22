@@ -1,7 +1,9 @@
 package zuverlaessigkeitswerkzeuge;
 
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
+
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass {
@@ -99,7 +101,7 @@ public class MainClass {
 	private void serielleStrutur_einf(String name) {
 		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name));
 	}
-	private void parallelStrutur_einf(int anz, int String name) {
+	private void parallelStrutur_einf(int anz, String name) {
 		bd.anfang.s.add(new Parallel_struktur(new ArrayList<Komponente>(), name));
 	}
 	

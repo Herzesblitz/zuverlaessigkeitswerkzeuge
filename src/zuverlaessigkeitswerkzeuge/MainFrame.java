@@ -6,14 +6,21 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 
 //import sun.awt.RepaintArea;
@@ -73,9 +80,12 @@ class JCanvas extends JComponent
    
    
  }
-
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame implements KeyListener,ActionListener{
 	int posX; int posY;
+	//KL Teil
+		JTextArea displayArea;
+	    JTextField typingArea;
+	
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	
@@ -83,19 +93,15 @@ public class MainFrame extends JFrame{
 
 	public static void main(String[] args) {
 		 // TODO code application logic here
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
+		
+		
 		frame.init_frame();
 
-=======
-		System.out.println("test");
->>>>>>> f7837798a78a8944b7d57e295f4b5dacbbdd731c
-		frame.init_frame(600,800);
->>>>>>> 6909cd9a9b403103f2ace5e2e02e3eb78f36558b
-		
+		System.out.println("test");		
 		frame.test(); 
 		frame.zeichneObjekte(frame.jc);
+		
+		 
 	}
 	
 	public  void init_frame() {
@@ -106,14 +112,20 @@ public class MainFrame extends JFrame{
 		                //System.out.println("a:"+posX+" "+posY);
 		            }
 		     });
+		        
 		
-		    Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
+			
+			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
+			//KL
+		        typingArea.addKeyListener(this);
+		        getContentPane().add(frame);
+			
 		    frame.setTitle("Zuverlässigkeitswerkzeuge");
 		    frame.setSize(aufloesung.width, aufloesung.height);
 		    frame.setResizable(false);
 		    frame.setLocation(0, 0);
-		    frame.setVisible(true);	
+		    frame.setVisible(true);	 frame.pack();
 		    	
 	}
 	
@@ -134,6 +146,35 @@ public class MainFrame extends JFrame{
 //		}
 		frame.getContentPane().add(jc);
 		frame.repaint();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("d");
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("b");
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("a");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		 //Clear the text components.
+        displayArea.setText("");
+        typingArea.setText("");
+        
+        //Return the focus to the typing area.
+        typingArea.requestFocusInWindow();		
 	}
 	
 	
