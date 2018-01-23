@@ -16,9 +16,13 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass{
+	PopUpDemo pud = new PopUpDemo();
+	static Element markedElement;
+	
 	Frame f = new Frame();   private TextField tf;
 
 	private static final long serialVersionUID = 1L;
@@ -58,6 +62,7 @@ public class MainClass{
 		
 		Color red = Color.red;
     	Block b2 = new Block(100, 100, 200, 200,red);
+    	
 	    mf.jc.zeichnen.add(b2);
 	    
 	    mf.zeichneObjekte(mf.jc);
@@ -66,7 +71,8 @@ public class MainClass{
 	private void test_blockdiagramm() {
 		ersteKomponente_einf("e1", 1, 1);
 		serielleStruktur_erweitern("e2", 1, 1, 100, 100);
-	
+		serielleStruktur_erweitern("e3", 1, 1, 200, 100);
+
 		zeichnen(bd.anfang);
 	}
 	
@@ -153,20 +159,72 @@ public class MainClass{
 			e.parent.einfuegen(pos, neu);
 		}
 		
-		public static void elementVerschieben(int x, int y) {
-			System.out.println("test2");
-			Element verschiebung = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
-			if(verschiebung==null)return;
+		public static void elementDropDownMenu(int x, int y, MouseEvent arg0) {
+			markedElement =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			if(markedElement==null)return;
 			else {
-				System.out.println("test7");
-				while(!released) {
-					verschiebung.block.x += pressedX - posX;
-					verschiebung.block.y += pressedY - posY;
-					mf.zeichneObjekte(mf.jc);
-				}
+	            mf.doPop(arg0);
 			}
 		}
 		
+		public static void elementVerschieben(int x, int y) {
+			if(markedElement==null)return;
+			else {
+				//TODO: Kollisionspruefung
+				
+				//Blockverschiebung
+				markedElement.block.x = x;
+				markedElement.block.y = y;
+				
+				//Lineberechnung
+				
+				for(Line line: markedElement.lines) {
+					if(markedElement.parent instanceof Parallel_struktur) {
+						line.x1 = markedElement.block.x + markedElement.block.width/2;
+						line.y1 = markedElement.block.y + markedElement.block.height;
+					}
+					if(markedElement.parent instanceof Struktur || markedElement.parent instanceof Serielle_struktur) { //TODO: Struktur-Teil ist schlechter fix
+						line.x1 = markedElement.block.x ;
+						line.y1 = markedElement.block.y + markedElement.block.height/2 ;
+						//System.out.println(line.x1+" "+line.y1);
+						
+						//vorgeaenge koord
+						int index_vorg =   markedElement.parent.s.indexOf(markedElement)-1;
+
+						line.x2 = ((Element) markedElement.parent.s.get(index_vorg)).block.x + ((Element) markedElement.parent.s.get(index_vorg)).block.width;
+						line.y2 = ((Element) markedElement.parent.s.get(index_vorg)).block.y + ((Element) markedElement.parent.s.get(index_vorg)).block.height / 2;
+
+						//nachfolger koord
+						int index_nachfol =   markedElement.parent.s.indexOf(markedElement)+1;
+						if(markedElement.parent.s.size()-1 < index_nachfol)continue;
+						((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 = markedElement.block.x + markedElement.block.width;
+						((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 =markedElement.block.y + markedElement.block.height / 2;
+					}
+				}
+					mf.zeichneObjekte(mf.jc);
+			}
+		}
+		
+		public static void elementMarkieren(int x, int y) {
+			if(markedElement != null) {			
+				markedElement.block.color = markedElement.blue;
+				if(markedElement ==  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y)) {
+					markedElement = null;
+					mf.zeichneObjekte(mf.jc);
+					return;
+				}
+				mf.zeichneObjekte(mf.jc);
+			}
+            markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			if(markedElement==null)return;
+			else {	
+				
+				System.out.println(markedElement.name);
+
+				markedElement.block.color = markedElement.red;
+				mf.zeichneObjekte(mf.jc);
+			}
+		}
 		
 		/*
 		 * loescht ein element von serieller Struktur 

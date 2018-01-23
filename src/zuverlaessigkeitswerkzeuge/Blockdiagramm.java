@@ -19,16 +19,20 @@ class Element extends Komponente{
 
 	Color black = Color.BLACK;
 	Color blue = Color.blue;
+	Color red = Color.red;
 	Block block = new Block(0, 0, 100, 100,blue);
-	ArrayList<Line> lines = new ArrayList<>(Arrays.asList(new Line(0, 0, 0, 0, blue)));
+	ArrayList<Line> lines = new ArrayList<>();
 	
 	public Element(String name, double MTTF, double MTTR, Struktur parent) {
 		super(name, MTTF, MTTR);
+		block.name = name; block.mttf = MTTF; block.mttr = MTTR;
 		this.parent = parent;
 		zuverlassigkeit(0);
 		berechne_verfuegbarkeit();
 		berechne_MTBF();
 	}
+	
+
 	
 	public void set_zuverlassigkeit(double r){
 		this.zuverlassigkeit = r;
@@ -271,8 +275,8 @@ public class Blockdiagramm {
 	
 	public static Element sucheElement(Komponente a, int x, int y) {
 		if(a instanceof Element) {
-			if(y >= ((Element) a).block.y && y <= ((Element) a).block.y + ((Element) a).block.height) {
-				if(x >= ((Element) a).block.x && x <= ((Element) a).block.x + ((Element) a).block.width) {
+			if(y >= ((Element) a).block.y && y <= (((Element) a).block.y + ((Element) a).block.height)) {
+				if(x >= ((Element) a).block.x && x <= (((Element) a).block.x + ((Element) a).block.width)) {
 					return (Element) a;
 				}
 			}

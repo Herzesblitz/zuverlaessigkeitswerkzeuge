@@ -22,8 +22,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 
 //import sun.awt.RepaintArea;
@@ -36,6 +39,9 @@ class Block extends _2DObject{
 	   int x; int y; int height; int width;
 	   Color color;
 	   String name="-";
+	   double mttf= 0;
+	   double mttr= 0;
+
 	   Block(int x, int y, int height, int width, Color color){
 		   this.x = x; this.y = y; this.height = height; this.width = width;
 		   this.color = color;
@@ -67,7 +73,17 @@ class JCanvas extends JComponent
 		    super.paintComponent(g);
 		    g2.setColor(((Block) a).color);   
 		    g2.drawRect(((Block) a).x,((Block) a).y,((Block) a).width,((Block) a).height);
+		    g2.setColor(Color.LIGHT_GRAY);
+		    g2.fillRect(((Block) a).x+5,((Block) a).y+5,((Block) a).width-5,((Block) a).height-5);
+		    g2.setColor(Color.black);
 		    g2.drawString(((Block) a).name, ((Block) a).x+((Block) a).width/2 , ((Block) a).y +((Block) a).height/2);
+		    String mttf = String.valueOf(((Block) a).mttf); 
+		    String mttr = String.valueOf(((Block) a).mttf); 
+		    g2.setColor(Color.black);
+		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.3) , (int) ( ((Block) a).y +((Block) a).height*0.65));
+		    g2.setColor(Color.black);
+		    g2.drawString("MTTR: "+mttr, (int) (((Block) a).x+((Block) a).width*0.3), (int) (((Block) a).y +((Block) a).height*0.8));
+
 		    continue;
 		  }
 		  if(a instanceof Line) {  
@@ -85,9 +101,27 @@ class JCanvas extends JComponent
    
    
  }
-public class MainFrame  extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
-	static int pressedX; static int pressedY; static int posX; static int posY; static boolean released=true; 
 
+class PopUpDemo extends JPopupMenu {
+    JMenuItem Eigenschaften;
+    JMenuItem Option2;
+    JMenuItem Option3; 
+
+    public PopUpDemo(){
+    	Eigenschaften = new JMenuItem("Eigenschaften");
+    	Option2 = new JMenuItem("Option2");
+    	Option3 = new JMenuItem("Option3");
+        add(Eigenschaften); add(Option2); add(Option3);
+    }
+    
+}
+
+
+
+public class MainFrame  extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
+	static int pressedX; static int pressedY; static int posX; static int posY; 
+	static int deltaX; static int deltaY;
+	char keyTyped;
 	
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
@@ -221,13 +255,14 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println(arg0.getKeyChar());
+		keyTyped = arg0.getKeyChar();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		if(SwingUtilities.isLeftMouseButton(arg0)) MainClass.elementMarkieren(arg0.getX(), arg0.getY());
+		if(SwingUtilities.isRightMouseButton(arg0)) MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
 	}
 
 	@Override
@@ -245,29 +280,34 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		pressedX = arg0.getX(); pressedY = arg0.getY(); 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		deltaX = deltaY = 0; 
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		MainClass.elementVerschieben(arg0.getX(),arg0.getY());
+        //System.out.println("d:"+deltaX+" "+deltaY);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
         posX = e.getX();
         posY = e.getY();
-        System.out.println("a:"+posX+" "+posY);
+        //System.out.println("a:"+posX+" "+posY);
     }
-
-
 	
+	
+
+
+	void doPop(MouseEvent e){
+	    PopUpDemo menu = new PopUpDemo();
+	    menu.show(e.getComponent(), e.getX(), e.getY());
+	}
 
 }
