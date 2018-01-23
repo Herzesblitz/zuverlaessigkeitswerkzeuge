@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -32,6 +33,7 @@ abstract class _2DObject{
 class Block extends _2DObject{
 	   int x; int y; int height; int width;
 	   Color color;
+	   String name="-";
 	   Block(int x, int y, int height, int width, Color color){
 		   this.x = x; this.y = y; this.height = height; this.width = width;
 		   this.color = color;
@@ -62,7 +64,8 @@ class JCanvas extends JComponent
 			Graphics2D g2 = (Graphics2D) g;
 		    super.paintComponent(g);
 		    g2.setColor(((Block) a).color);   
-		    g2.fillRect(((Block) a).x,((Block) a).y,((Block) a).width,((Block) a).height);
+		    g2.drawRect(((Block) a).x,((Block) a).y,((Block) a).width,((Block) a).height);
+		    g2.drawString(((Block) a).name, ((Block) a).x+((Block) a).width/2 , ((Block) a).y +((Block) a).height/2);
 		    continue;
 		  }
 		  if(a instanceof Line) {  
@@ -83,7 +86,7 @@ class JCanvas extends JComponent
 public class MainFrame extends JFrame{
 
 
-	int posX; int posY; char keyTyped;
+	static int posX; static int posY; char keyTyped; static int pressedX; static int pressedY; static boolean realeased=true;
 
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
@@ -91,10 +94,6 @@ public class MainFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		
-
-	    
-	    
 		frame.init_frame();
 
 		System.out.println("test");
@@ -110,9 +109,41 @@ public class MainFrame extends JFrame{
 		            public void mouseMoved(final MouseEvent e) {
 		                posX = e.getX();
 		                posY = e.getY();
-		                //System.out.println("a:"+posX+" "+posY);
+		                System.out.println("a:"+posX+" "+posY);
 		            }
+		            
 		     });
+			 
+			 addMouseListener(new MouseListener() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					realeased =true;
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//System.out.println("k."+posX+" "+posY);
+		            realeased = false;
+		            MainClass.elementVerschieben(posX, posY);
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+				}
+			});
 
 			 addKeyListener(new KeyListener() {
 				@Override
@@ -139,11 +170,12 @@ public class MainFrame extends JFrame{
 			System.out.println(aufloesung.width+" "+aufloesung.height);
 			
 
-			frame.setSize(1000,1000);
 			frame.setTitle("Zuverlässigkeitswerkzeuge");
 		    frame.setResizable(true);
 		    frame.setLocation(0, 0);
-		    frame.setVisible(true);	 frame.pack();		    	
+		    frame.setVisible(true);	 frame.pack();	
+			frame.setSize(aufloesung);
+
 	}
 	
 	private void test() {
@@ -156,7 +188,7 @@ public class MainFrame extends JFrame{
 	    jc.zeichnen.add(b2);
 	}
 	
-	public void zeichneObjekte(JCanvas jc) {
+	public static void zeichneObjekte(JCanvas jc) {
 //		for(_2DObject d: jc.zeichnen) {
 //			if(d instanceof Block)System.out.println(((Block) d).x);
 //			if(d instanceof Line)System.out.println(((Line) d).x1);

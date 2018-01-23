@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+import sun.applet.Main;
+
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass {
@@ -15,7 +17,7 @@ public class MainClass {
 	int width = 800;
 	
 	Blockdiagramm bd = new Blockdiagramm();
-	MainFrame mf = new MainFrame();
+	static MainFrame mf = new MainFrame();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -37,7 +39,8 @@ public class MainClass {
 	
 	private void test_blockdiagramm() {
 		ersteKomponente_einf("e1", 1, 1);
-
+		serielleStruktur_erweitern("e2", 1, 1, 100, 100);
+	
 		zeichnen(bd.anfang);
 	}
 	
@@ -119,10 +122,25 @@ public class MainClass {
 			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			int pos = e.parent.s.indexOf(e);
 				Element neu = new Element(name, MTTF, MTTR, e.parent);
-				neu.block.x = x; neu.block.y = y;
-				neu.lines.add(new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, x, y+neu.block.height/2, Color.black));
+				neu.block.x = e.block.x + e.block.width + 10; neu.block.y = e.block.y;
+				neu.lines.add(new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, neu.block.x, neu.block.y +neu.block.height/2, Color.black));
 			e.parent.einfuegen(pos, neu);
 		}
+		
+		public static void elementVerschieben(int x, int y) {
+			System.out.println("test2");
+			Element verschiebung = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			if(verschiebung==null)return;
+			else {
+				System.out.println("test7");
+				while(!MainFrame.realeased) {
+					verschiebung.block.x += MainFrame.pressedX - MainFrame.posX;
+					verschiebung.block.y += MainFrame.pressedY - MainFrame.posY;
+					MainFrame.zeichneObjekte(mf.jc);
+				}
+			}
+		}
+		
 		
 		/*
 		 * loescht ein element von serieller Struktur 
