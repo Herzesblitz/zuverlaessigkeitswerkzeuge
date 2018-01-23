@@ -59,7 +59,7 @@ class JCanvas extends JComponent
    {
 	   
 	  for(_2DObject a: zeichnen) {
-		  System.out.println(a.toString());
+		  //System.out.println(a.toString());
 		  if(a instanceof Block) {  
 			Graphics2D g2 = (Graphics2D) g;
 		    super.paintComponent(g);
@@ -84,10 +84,9 @@ class JCanvas extends JComponent
    
  }
 public class MainFrame extends JFrame{
+	static int pressedX; static int pressedY; static int posX; static int posY; static boolean released=true; 
 
-
-	static int posX; static int posY; char keyTyped; static int pressedX; static int pressedY; static boolean realeased=true;
-
+	
 	JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	
@@ -104,67 +103,66 @@ public class MainFrame extends JFrame{
 		 
 	}
 	
-	public  void init_frame() {
-			 addMouseMotionListener(new MouseMotionAdapter() {
-		            public void mouseMoved(final MouseEvent e) {
-		                posX = e.getX();
-		                posY = e.getY();
-		                System.out.println("a:"+posX+" "+posY);
-		            }
-		            
-		     });
-			 
-			 addMouseListener(new MouseListener() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					realeased =true;
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					//System.out.println("k."+posX+" "+posY);
-		            realeased = false;
-		            MainClass.elementVerschieben(posX, posY);
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					
-				}
-			});
-
-			 addKeyListener(new KeyListener() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					// TODO Auto-generated method stub
-					System.out.println(e.getKeyChar());
-				}
-				
-				@Override
-				public void keyReleased(KeyEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void keyPressed(KeyEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+	public void init_frame() {	
+		addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(final MouseEvent e) {
+                posX = e.getX();
+                posY = e.getY();
+                System.out.println("a:"+posX+" "+posY);
+            }
+            
+		});
+	 
+		addMouseListener(new MouseListener() {
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			released =true;
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			//System.out.println("k."+posX+" "+posY);
+            released = false;
+            MainClass.elementVerschieben(posX, posY);
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
 			
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			
+		}
+	});
+
+	 addKeyListener(new KeyListener() {
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println(e.getKeyChar());
+		}
+		
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	});
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
 			System.out.println(aufloesung.width+" "+aufloesung.height);
@@ -188,7 +186,7 @@ public class MainFrame extends JFrame{
 	    jc.zeichnen.add(b2);
 	}
 	
-	public static void zeichneObjekte(JCanvas jc) {
+	public void zeichneObjekte(JCanvas jc) {
 //		for(_2DObject d: jc.zeichnen) {
 //			if(d instanceof Block)System.out.println(((Block) d).x);
 //			if(d instanceof Line)System.out.println(((Line) d).x1);

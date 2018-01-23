@@ -1,11 +1,36 @@
 package zuverlaessigkeitswerkzeuge;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
-public class MainClass {
+public class MainClass extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MainClass() {
+		this.addMouseMotionListener(this);
+		this.addMouseListener(this);
+		this.addKeyListener(this);
+	}
+	JCanvas jc = new JCanvas();
+	
+	
+	//eingabe-variablen
+	static int pressedX; static int pressedY; static int posX; static int posY; static boolean released=true; 
 	
 	static int maxheigth_el=0;
 	static int maxwidth_el=0;
@@ -19,12 +44,9 @@ public class MainClass {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MainClass mc = new MainClass();
-//		mc.mf.init_frame();
-//		mc.test_zeichnen();
-		
 		mc.test_blockdiagramm();
 	}
-	
+
 	private void test_zeichnen() {
 		
 		Color red = Color.red;
@@ -130,10 +152,10 @@ public class MainClass {
 			if(verschiebung==null)return;
 			else {
 				System.out.println("test7");
-				while(!MainFrame.realeased) {
-					verschiebung.block.x += MainFrame.pressedX - MainFrame.posX;
-					verschiebung.block.y += MainFrame.pressedY - MainFrame.posY;
-					MainFrame.zeichneObjekte(mf.jc);
+				while(!released) {
+					verschiebung.block.x += pressedX - posX;
+					verschiebung.block.y += pressedY - posY;
+					mf.zeichneObjekte(mf.jc);
 				}
 			}
 		}
@@ -194,6 +216,67 @@ public class MainClass {
 		}
 		System.out.println("test");
 		mf.zeichneObjekte(mf.jc);
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+        posX = e.getX();
+        posY = e.getY();
+        System.out.println("a:"+posX+" "+posY);
+    }
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(arg0.getKeyChar());
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("a");
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 		
 
