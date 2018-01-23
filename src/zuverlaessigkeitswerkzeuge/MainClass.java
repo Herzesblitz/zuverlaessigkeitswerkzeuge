@@ -1,6 +1,10 @@
 package zuverlaessigkeitswerkzeuge;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -14,17 +18,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
-public class MainClass extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
-	
-	/**
-	 * 
-	 */
+public class MainClass{
+	Frame f = new Frame();   private TextField tf;
+
 	private static final long serialVersionUID = 1L;
 
 	public MainClass() {
-		this.addMouseMotionListener(this);
-		this.addMouseListener(this);
-		this.addKeyListener(this);
+		 f = new Frame("Two listeners example");
+	      tf = new TextField(30);
+
 	}
 	JCanvas jc = new JCanvas();
 	
@@ -41,12 +43,17 @@ public class MainClass extends JFrame implements MouseMotionListener, MouseListe
 	Blockdiagramm bd = new Blockdiagramm();
 	static MainFrame mf = new MainFrame();
 
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MainClass mc = new MainClass();
+
+
 		mc.test_blockdiagramm();
 	}
 
+	
+	
 	private void test_zeichnen() {
 		
 		Color red = Color.red;
@@ -216,68 +223,6 @@ public class MainClass extends JFrame implements MouseMotionListener, MouseListe
 		}
 		System.out.println("test");
 		mf.zeichneObjekte(mf.jc);
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-        posX = e.getX();
-        posY = e.getY();
-        System.out.println("a:"+posX+" "+posY);
-    }
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(arg0.getKeyChar());
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("a");
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-		
+	}		
 
 }

@@ -3,6 +3,7 @@ package zuverlaessigkeitswerkzeuge;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -13,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -83,7 +85,7 @@ class JCanvas extends JComponent
    
    
  }
-public class MainFrame extends JFrame{
+public class MainFrame  extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
 	static int pressedX; static int pressedY; static int posX; static int posY; static boolean released=true; 
 
 	
@@ -95,7 +97,7 @@ public class MainFrame extends JFrame{
 	public static void main(String[] args) {
 		frame.init_frame();
 
-		System.out.println("test");
+		//System.out.println("test");
 		
 		frame.test(); 
 		frame.zeichneObjekte(frame.jc);
@@ -103,76 +105,86 @@ public class MainFrame extends JFrame{
 		 
 	}
 	
+	public MainFrame() {
+	}
+	
 	public void init_frame() {	
-		addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseMoved(final MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-                System.out.println("a:"+posX+" "+posY);
-            }
-            
-		});
-	 
-		addMouseListener(new MouseListener() {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			released =true;
-		}
-		
-		@Override
-		public void mousePressed(MouseEvent e) {
-			//System.out.println("k."+posX+" "+posY);
-            released = false;
-            MainClass.elementVerschieben(posX, posY);
-		}
-		
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			
-		}
-	});
 
-	 addKeyListener(new KeyListener() {
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-			System.out.println(e.getKeyChar());
-		}
 		
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
+		//		addMouseMotionListener(new MouseMotionAdapter() {
+//            public void mouseMoved(final MouseEvent e) {
+//                posX = e.getX();
+//                posY = e.getY();
+//                System.out.println("a:"+posX+" "+posY);
+//            }
+//            
+//		});
+//	 
+//		addMouseListener(new MouseListener() {
+//		@Override
+//		public void mouseReleased(MouseEvent e) {
+//			released =true;
+//		}
+//		
+//		@Override
+//		public void mousePressed(MouseEvent e) {
+//			//System.out.println("k."+posX+" "+posY);
+//            released = false;
+//            MainClass.elementVerschieben(posX, posY);
+//		}
+//		
+//		@Override
+//		public void mouseExited(MouseEvent e) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//		
+//		@Override
+//		public void mouseEntered(MouseEvent e) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//		
+//		@Override
+//		public void mouseClicked(MouseEvent e) {
+//			
+//		}
+//	});
+//
+//	 addKeyListener(new KeyListener() {
+//		@Override
+//		public void keyTyped(KeyEvent e) {
+//			// TODO Auto-generated method stub
+//			System.out.println(e.getKeyChar());
+//		}
+//		
+//		@Override
+//		public void keyReleased(KeyEvent e) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//		
+//		@Override
+//		public void keyPressed(KeyEvent e) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//	});
 		
-		@Override
-		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-	});
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
 			System.out.println(aufloesung.width+" "+aufloesung.height);
 			
 
 			frame.setTitle("Zuverlässigkeitswerkzeuge");
-		    frame.setResizable(true);
-		    frame.setLocation(0, 0);
-		    frame.setVisible(true);	 frame.pack();	
+			frame.setResizable(true);
+			frame.setLocation(0, 0);
+			frame.setVisible(true);	 frame.pack();	
 			frame.setSize(aufloesung);
+			
+			frame.addMouseMotionListener(this);
+			frame.addMouseListener(this);
+			frame.addKeyListener(this);
 
 	}
 	
@@ -194,6 +206,66 @@ public class MainFrame extends JFrame{
 		frame.getContentPane().add(jc);
 		frame.repaint();
 	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(arg0.getKeyChar());
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+        posX = e.getX();
+        posY = e.getY();
+        System.out.println("a:"+posX+" "+posY);
+    }
 
 
 	
