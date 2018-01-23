@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-import sun.applet.Main;
-
-
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass {
 	
