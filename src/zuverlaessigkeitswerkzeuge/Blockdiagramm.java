@@ -21,7 +21,7 @@ class Element extends Komponente{
 	Color blue = Color.blue;
 	Color red = Color.red;
 	Block block = new Block(0, 0, 100, 100,blue);
-	ArrayList<Line> lines = new ArrayList<>();
+	Line vorg_line;
 	
 	public Element(String name, double MTTF, double MTTR, Struktur parent) {
 		super(name, MTTF, MTTR);
@@ -265,7 +265,6 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 		double zuv= Math.pow(el_zuv,n)+uber_factor*Math.pow(el_zuv,k)*Math.pow(1-el_zuv,n-k);
 		this.zuverlassigkeit = zuv;
 	}
-	
 }
 
 

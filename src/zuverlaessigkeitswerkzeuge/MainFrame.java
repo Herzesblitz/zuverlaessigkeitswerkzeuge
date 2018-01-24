@@ -1,11 +1,15 @@
 package zuverlaessigkeitswerkzeuge;
 
+import java.awt.BorderLayout;
+//TODO Strukturen bekommen Darstellung: Umrandung der Elemente, Name an Umrandung, ggf. MTTF etc.
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,15 +22,21 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import sun.reflect.annotation.AnnotatedTypeFactory;
+
 
 
 //import sun.awt.RepaintArea;
@@ -78,12 +88,11 @@ class JCanvas extends JComponent
 		    g2.setColor(Color.black);
 		    g2.drawString(((Block) a).name, ((Block) a).x+((Block) a).width/2 , ((Block) a).y +((Block) a).height/2);
 		    String mttf = String.valueOf(((Block) a).mttf); 
-		    String mttr = String.valueOf(((Block) a).mttf); 
+		    String mttr = String.valueOf(((Block) a).mttr); 
 		    g2.setColor(Color.black);
 		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.3) , (int) ( ((Block) a).y +((Block) a).height*0.65));
 		    g2.setColor(Color.black);
 		    g2.drawString("MTTR: "+mttr, (int) (((Block) a).x+((Block) a).width*0.3), (int) (((Block) a).y +((Block) a).height*0.8));
-
 		    continue;
 		  }
 		  if(a instanceof Line) {  
@@ -101,19 +110,114 @@ class JCanvas extends JComponent
    
    
  }
+//TODO: actionlistener
+//TODO: klasse fuer eigenschaften fenster
 
-class PopUpDemo extends JPopupMenu {
+class Eigenschaftenfenster_element extends JFrame{
+	Element el = new Element("", 0, 0, null);
+	JTextField editTextArea_name = new JTextField();
+	JTextField editTextArea_mttf = new JTextField();
+	JTextField editTextArea_mttr = new JTextField();
+
+	 //Kontextfenster Element
+		String name; double mttr; double mttf;
+	
+	public Eigenschaftenfenster_element() {
+		el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+		if(el == null) return;
+			
+		this.setTitle(el.name);
+		this.setResizable(true);
+		this.setLocation(MainFrame.posX, MainFrame.posY);
+		this.setVisible(true);	 
+		this.setSize(500,200);
+		
+		Container cp = getContentPane();
+		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+		
+		//INPUT TEXT AREA
+		JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
+		label.setSize(100, 100);
+		
+		BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
+		cp.setLayout(layout);
+		 this.getContentPane().add(label);
+		 
+		editTextArea_name = new JTextField(el.name);
+		editTextArea_name.setHorizontalAlignment(editTextArea_name.LEFT);
+		//editTextArea_name.setMaximumSize(new Dimension(200,400));
+		cp.add(editTextArea_name);
+		 
+		editTextArea_mttf = new JTextField(String.valueOf(el.MTTF));
+		editTextArea_mttf.setHorizontalAlignment(editTextArea_mttf.LEFT);
+		//editTextArea_mttf.setMaximumSize(new Dimension(200,400));
+		cp.add(editTextArea_mttf);
+		
+		editTextArea_mttr= new JTextField(String.valueOf(el.MTTR));
+		editTextArea_mttr.setHorizontalAlignment(editTextArea_mttr.LEFT);
+		//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+		cp.add(editTextArea_mttr);			
+		this.setVisible(true);
+		
+		editTextArea_name.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				el.name = editTextArea_name.getText();
+				MainClass.aendereEigenschaften(el);
+			}
+		});
+		editTextArea_mttf.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				el.MTTF = Double.valueOf(editTextArea_mttf.getText());
+				MainClass.aendereEigenschaften(el);
+			}
+		});
+		editTextArea_mttr.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				el.MTTR = Double.valueOf(editTextArea_mttr.getText());
+				MainClass.aendereEigenschaften(el);
+			}
+		});
+		
+	}	
+}
+
+class DropDownMenuElement extends JPopupMenu implements ActionListener {
+	Eigenschaftenfenster_element fenster;
+	ActionListener menuListener;
     JMenuItem Eigenschaften;
     JMenuItem Option2;
-    JMenuItem Option3; 
+    JMenuItem Option3;
+    //TODO: optionen erweitern
+    
+   
 
-    public PopUpDemo(){
+    public DropDownMenuElement(){
     	Eigenschaften = new JMenuItem("Eigenschaften");
     	Option2 = new JMenuItem("Option2");
     	Option3 = new JMenuItem("Option3");
         add(Eigenschaften); add(Option2); add(Option3);
+        //Buttons zum Actionlistener hinzufuegen
+        	Eigenschaften.addActionListener(this);
+        	Option2.addActionListener(this);
+        	Option3.addActionListener(this);
+
     }
-    
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource() == Eigenschaften) {
+	    	fenster = new Eigenschaftenfenster_element();
+			fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+		}
+		if(e.getSource() == fenster.editTextArea_name) {
+			fenster.name = fenster.editTextArea_name.getText();
+		}
+	}    
 }
 
 
@@ -123,93 +227,30 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	static int deltaX; static int deltaY;
 	char keyTyped;
 	
-	JCanvas jc = new JCanvas();
+	static JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
+	public DropDownMenuElement ddme;
 	
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		frame.init_frame();
-
+		//frame.init_frame();
+		Eigenschaftenfenster_element el = new Eigenschaftenfenster_element();
+		
 		//System.out.println("test");
 		
-		frame.test(); 
-		frame.zeichneObjekte(frame.jc);
-		
-		 
+		//frame.test(); 
+		//frame.zeichneObjekte(frame.jc);
 	}
 	
 	public MainFrame() {
+		
 	}
 	
-	public void init_frame() {	
-
-		
-		//		addMouseMotionListener(new MouseMotionAdapter() {
-//            public void mouseMoved(final MouseEvent e) {
-//                posX = e.getX();
-//                posY = e.getY();
-//                System.out.println("a:"+posX+" "+posY);
-//            }
-//            
-//		});
-//	 
-//		addMouseListener(new MouseListener() {
-//		@Override
-//		public void mouseReleased(MouseEvent e) {
-//			released =true;
-//		}
-//		
-//		@Override
-//		public void mousePressed(MouseEvent e) {
-//			//System.out.println("k."+posX+" "+posY);
-//            released = false;
-//            MainClass.elementVerschieben(posX, posY);
-//		}
-//		
-//		@Override
-//		public void mouseExited(MouseEvent e) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-//		
-//		@Override
-//		public void mouseEntered(MouseEvent e) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-//		
-//		@Override
-//		public void mouseClicked(MouseEvent e) {
-//			
-//		}
-//	});
-//
-//	 addKeyListener(new KeyListener() {
-//		@Override
-//		public void keyTyped(KeyEvent e) {
-//			// TODO Auto-generated method stub
-//			System.out.println(e.getKeyChar());
-//		}
-//		
-//		@Override
-//		public void keyReleased(KeyEvent e) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-//		
-//		@Override
-//		public void keyPressed(KeyEvent e) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-//	});
-		
+	public void init_frame() {		
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
 			System.out.println(aufloesung.width+" "+aufloesung.height);
-			
-
 			frame.setTitle("Zuverlässigkeitswerkzeuge");
 			frame.setResizable(true);
 			frame.setLocation(0, 0);
@@ -306,7 +347,7 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 
 
 	void doPop(MouseEvent e){
-	    PopUpDemo menu = new PopUpDemo();
+		DropDownMenuElement menu = new DropDownMenuElement();
 	    menu.show(e.getComponent(), e.getX(), e.getY());
 	}
 

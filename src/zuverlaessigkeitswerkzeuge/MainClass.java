@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
 
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass{
-	PopUpDemo pud = new PopUpDemo();
+	DropDownMenuElement ddme = new DropDownMenuElement();
 	static Element markedElement;
 	
 	Frame f = new Frame();   private TextField tf;
@@ -29,12 +29,10 @@ public class MainClass{
 
 	public MainClass() {
 		 f = new Frame("Two listeners example");
-	      tf = new TextField(30);
-
+	     tf = new TextField(30);
 	}
 	JCanvas jc = new JCanvas();
-	
-	
+
 	//eingabe-variablen
 	static int pressedX; static int pressedY; static int posX; static int posY; static boolean released=true; 
 	
@@ -49,13 +47,25 @@ public class MainClass{
 
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		MainClass mc = new MainClass();
 
 
 		mc.test_blockdiagramm();
 	}
 
+	public static void aendereEigenschaften(Element e) {
+		markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10);
+		markedElement.name = e.name;
+		markedElement.block.name = e.name;
+		markedElement.MTTF = e.MTTF;
+		markedElement.block.mttf = e.MTTF;
+		markedElement.MTTR = e.MTTR;
+		markedElement.block.mttr = e.MTTR;
+
+		
+		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
+		mf.zeichneObjekte(mf.jc);
+	}
 	
 	
 	private void test_zeichnen() {
@@ -89,8 +99,8 @@ public class MainClass{
 			}
 			if(k instanceof Element) {
 			    mf.jc.zeichnen.add(((Element) k).block);
-			    for(Line l: ((Element) k).lines) {
-				    mf.jc.zeichnen.add(l);	
+			    if(((Element) k).vorg_line != null) {
+				    mf.jc.zeichnen.add(((Element) k).vorg_line);	
 			    }
 			}
 		}
@@ -109,8 +119,8 @@ public class MainClass{
 			}
 			if(k instanceof Element) {
 			    mf.jc.zeichnen.add(((Element) k).block);
-			    for(Line l: ((Element) k).lines) {
-				    mf.jc.zeichnen.add(l);	
+			    if(((Element) k).vorg_line != null) {
+			    	mf.jc.zeichnen.add(((Element) k).vorg_line);
 			    }
 			}
 		}
@@ -125,15 +135,7 @@ public class MainClass{
 	
 	//erweitert Komponente um Struktur
 	//nur am Anfang verwenden  
-	private void serielleStrutur_einf(String name) {
-		bd.anfang.s.add(new Serielle_struktur(new ArrayList<Komponente>(), name, bd.anfang));
-	}
-
-	private void parallelStrutur_einf(int anz, String name) {
-		bd.anfang.s.add(new Parallel_struktur (new ArrayList<Komponente>(), name, bd.anfang));
-	}	
-		
-		private void aufStruktur_erweitern(String name, int x, int y) {
+		private void aufSerielleStruktur_erweitern(String name, int x, int y) {
 			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			ArrayList<Komponente> k = new ArrayList<>(); k.add(e);
 			e.parent.s.add(new Serielle_struktur(k, name, e.parent));
@@ -143,6 +145,10 @@ public class MainClass{
 			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			ArrayList<Komponente> k = new ArrayList<>(); k.add(e);
 			e.parent.s.add(new Parallel_struktur(k, name, e.parent)); 
+		}
+		
+		private void aufK_aus_N_erweitern(String name, int x, int y) {
+
 		}
 	
 	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
@@ -155,9 +161,11 @@ public class MainClass{
 			int pos = e.parent.s.indexOf(e);
 				Element neu = new Element(name, MTTF, MTTR, e.parent);
 				neu.block.x = e.block.x + e.block.width + 10; neu.block.y = e.block.y;
-				neu.lines.add(new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, neu.block.x, neu.block.y +neu.block.height/2, Color.black));
+				neu.vorg_line = new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, neu.block.x, neu.block.y +neu.block.height/2, Color.black);
 			e.parent.einfuegen(pos, neu);
 		}
+		
+		
 		
 		public static void elementDropDownMenu(int x, int y, MouseEvent arg0) {
 			markedElement =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
@@ -173,37 +181,58 @@ public class MainClass{
 				//TODO: Kollisionspruefung
 				
 				//Blockverschiebung
-				markedElement.block.x = x;
-				markedElement.block.y = y;
-				
+				markedElement.block.x = x-markedElement.block.width/2;
+				markedElement.block.y = y-markedElement.block.height/2;
+				//TODO: linien werden tw. ueber bloecken gezeichnet
 				//Lineberechnung
-				
-				for(Line line: markedElement.lines) {
-					if(markedElement.parent instanceof Parallel_struktur) {
-						line.x1 = markedElement.block.x + markedElement.block.width/2;
-						line.y1 = markedElement.block.y + markedElement.block.height;
+				//spezialfall: erstes Element in AL der parent-struktur
+					if(markedElement.parent.s.get(0) == markedElement && markedElement.parent.s.size()>1) {
+						((Element) markedElement.parent.s.get(1)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
+						((Element) markedElement.parent.s.get(1)).vorg_line.y2 = markedElement.block.y + markedElement.block.height / 2;
+//							System.out.println(((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 + " "+ ((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 );
+						System.out.println("1");
 					}
-					if(markedElement.parent instanceof Struktur || markedElement.parent instanceof Serielle_struktur) { //TODO: Struktur-Teil ist schlechter fix
-						line.x1 = markedElement.block.x ;
-						line.y1 = markedElement.block.y + markedElement.block.height/2 ;
-						//System.out.println(line.x1+" "+line.y1);
-						
-						//vorgeaenge koord
-						int index_vorg =   markedElement.parent.s.indexOf(markedElement)-1;
-
-						line.x2 = ((Element) markedElement.parent.s.get(index_vorg)).block.x + ((Element) markedElement.parent.s.get(index_vorg)).block.width;
-						line.y2 = ((Element) markedElement.parent.s.get(index_vorg)).block.y + ((Element) markedElement.parent.s.get(index_vorg)).block.height / 2;
-
-						//nachfolger koord
-						int index_nachfol =   markedElement.parent.s.indexOf(markedElement)+1;
-						if(markedElement.parent.s.size()-1 < index_nachfol)continue;
-						((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 = markedElement.block.x + markedElement.block.width;
-						((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 =markedElement.block.y + markedElement.block.height / 2;
-					}
+				//sonst
+					if(markedElement.vorg_line != null) {
+						if(markedElement.parent instanceof Parallel_struktur) {
+							markedElement.vorg_line.x1 = markedElement.block.x + markedElement.block.width/2;
+							markedElement.vorg_line.y1 = markedElement.block.y + markedElement.block.height;
+						}
+						if(markedElement.parent instanceof Struktur || markedElement.parent instanceof Serielle_struktur) { //TODO: Struktur-Teil ist schlechter fix
+							markedElement.vorg_line.x1 = markedElement.block.x ;
+							markedElement.vorg_line.y1 = markedElement.block.y + markedElement.block.height/2 ;
+							//System.out.println(line.x1+" "+line.y1);
+							
+							//vorgeaenge koord
+							int index_vorg =   markedElement.parent.s.indexOf(markedElement)-1;
+	
+							markedElement.vorg_line.x2 = ((Element) markedElement.parent.s.get(index_vorg)).block.x + ((Element) markedElement.parent.s.get(index_vorg)).block.width;
+							markedElement.vorg_line.y2 = ((Element) markedElement.parent.s.get(index_vorg)).block.y + ((Element) markedElement.parent.s.get(index_vorg)).block.height / 2;
+							
+							System.out.println();
+							//nachfolger koord
+							int index_nachfol =   markedElement.parent.s.indexOf(markedElement)+1;
+							if(markedElement.parent.s.size()-1 >= index_nachfol) {
+								((Element) markedElement.parent.s.get(index_nachfol)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
+								((Element) markedElement.parent.s.get(index_nachfol)).vorg_line.y2 = markedElement.block.y + markedElement.block.height / 2;
+	//							System.out.println(((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 + " "+ ((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 );
+							
+							}
+							
+						}
 				}
 					mf.zeichneObjekte(mf.jc);
 			}
 		}
+		
+		public static void strukturGroesseVeraendern(int x, int y) {
+			
+		}
+		
+		public static void elementGroesseVeraendern(int x, int y) {
+			
+		}
+		//TODO: automatische verkleinerung?
 		
 		public static void elementMarkieren(int x, int y) {
 			if(markedElement != null) {			
@@ -230,10 +259,16 @@ public class MainClass{
 		 * loescht ein element von serieller Struktur 
 		 * Position wird durch klicken auf diesen indentifiziert
 		 */
-		private void serielleStruktur_verkleinern(int x, int y) {
+		//TODO: 
+		private void struktur_verkleinern(int x, int y) {
 			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			int pos = e.parent.s.indexOf(e);
 			e.parent.loeschen(pos);
+		}
+		
+		//TODO
+		private void k_aus_n_Struktur_erweitern(String name, double MTTF, double MTTR,int x, int y) {
+
 		}
 		
 		/*
@@ -245,26 +280,35 @@ public class MainClass{
 			int pos = e.parent.s.indexOf(e);
 				Element neu = new Element(name, MTTF, MTTR, e.parent);
 				neu.block.x = x; neu.block.y = y;
-				neu.lines.add(new Line(e.block.x + e.block.width/2, e.block.y, neu.block.x + neu.block.width/2, neu.block.y + neu.block.height, Color.black));
+				neu.vorg_line = new Line(e.block.x + e.block.width/2, e.block.y, neu.block.x + neu.block.width/2, neu.block.y + neu.block.height, Color.black);
 			e.parent.einfuegen(pos, neu);		
 		}
-		
-		/*
-		 * loescht ein element von parallel Struktur 
-		 * Position wird durch klicken auf diesen indentifiziert
-		 */
-		private void parallelStruktur_verkleinern(int x, int y) {
-			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
-			int pos = e.parent.s.indexOf(e);
-			e.parent.loeschen(pos);
-		}
-
-	
-	
-	private void paralleleStrutur_einf(String name, int x, int y) {
+			
+	//klicke Element, fuege parallelstruk dahinter ein //TODO: implen
+	private void paralleleStrutur_einf_dahinter(String name, int x, int y) {
+		//pruefung ist Element in serieller struktur?
 		bd.zeiger = Blockdiagramm.sucheElement(bd.anfang, x, y);
+		
+		//ansonsten fuege parallelstruktur "daneben" -also in ArrayList des Parent ein
+		
 	}
 	
+	
+	//klicke Element, fuege seriellestruk dahinter ein //TODO: implen
+		private void serielleStrutur_einf_dahinter(String name, int x, int y) {
+			//pruefung ist Element in paralleler struktur?
+
+			bd.zeiger = Blockdiagramm.sucheElement(bd.anfang, x, y);
+			//ansonsten fuege parallelstruktur "daneben" -also in ArrayList des Parent ein
+
+		}
+		
+		
+		//TODO: vllt. paralleltruktur -> k_n struktur umwandeln
+		//
+		private void K_aus_NStrutur_einf_dahinter(String name, int x, int y) {
+
+		}
 
 	private void zeichnen(Struktur S) {
 		mf.init_frame();
@@ -273,10 +317,10 @@ public class MainClass{
 				zeichnen((Struktur) k);
 			}
 			if(k instanceof Element) {
-			    mf.jc.zeichnen.add(((Element) k).block);
-			    for(Line l: ((Element) k).lines) {
-				    mf.jc.zeichnen.add(l);	
-			    }
+				if(((Element) k).vorg_line != null) {
+				    mf.jc.zeichnen.add(((Element) k).vorg_line);
+				}
+			    mf.jc.zeichnen.add(((Element) k).block);		
 			}
 		}
 		System.out.println("test");
