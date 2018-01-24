@@ -1,15 +1,11 @@
 package zuverlaessigkeitswerkzeuge;
 
-import java.awt.BorderLayout;
 //TODO Strukturen bekommen Darstellung: Umrandung der Elemente, Name an Umrandung, ggf. MTTF etc.
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,32 +13,32 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Scanner;
-
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-
-import sun.reflect.annotation.AnnotatedTypeFactory;
-
 
 
 //import sun.awt.RepaintArea;
 
 abstract class _2DObject{
 	
+}
+
+class Rahmen extends _2DObject{
+	   int x; int y; int height; int width;
+	   String name ="-";
+	   double mttf= 0;
+	   double mttr= 0;
+	   double verfuegbarkeit;
+	   double zuverlaessigkeit;
 }
 
 class Block extends _2DObject{
@@ -71,7 +67,11 @@ class Line extends _2DObject{
 
 class JCanvas extends JComponent
 {
-   ArrayList<_2DObject> zeichnen = new ArrayList<>();
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+ArrayList<_2DObject> zeichnen = new ArrayList<>();
    
    public void paintComponent(Graphics g) 
    {
@@ -102,6 +102,12 @@ class JCanvas extends JComponent
 			    g2.drawLine(((Line) a).x1, ((Line) a).y1, ((Line) a).x2, ((Line) a).y2); 
 			    continue;
 		  }
+		  if(a instanceof Rahmen) {
+			  Graphics2D g2 = (Graphics2D) g;
+			    super.paintComponent(g);
+			    g2.setColor(Color.gray);
+			    g2.drawRect(((Rahmen) a).x, ((Rahmen) a).y, ((Rahmen) a).width, ((Rahmen) a).height);
+		  }
 		  
 	  }
 	  
@@ -113,7 +119,94 @@ class JCanvas extends JComponent
 //TODO: actionlistener
 //TODO: klasse fuer eigenschaften fenster
 
+class Aussehenfenster_element extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Element el = new Element("", 0, 0, null);
+	JTextField editTextArea_hoehe;
+	JTextField editTextArea_breite;
+	JTextField editTextArea_farbe;
+	
+	public Aussehenfenster_element() {
+		el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+		if(el == null) return;
+		
+		this.setTitle("Aussehen: "+el.name);
+		this.setResizable(true);
+		this.setLocation(MainFrame.posX, MainFrame.posY);
+		this.setVisible(true);	 
+		this.setSize(500,200);
+		
+		Container cp = getContentPane();
+		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+		
+		//INPUT TEXT AREA
+		JLabel label=new JLabel("Aussehen verändern: Höhe, Breite, Farbe");
+		label.setSize(100, 100);
+		
+		BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
+		cp.setLayout(layout);
+		 this.getContentPane().add(label);
+		 
+		 editTextArea_hoehe = new JTextField(el.block.height);
+		 editTextArea_hoehe.setHorizontalAlignment(SwingConstants.LEFT);
+			cp.add(editTextArea_hoehe);
+			 
+		editTextArea_breite = new JTextField(String.valueOf(el.block.width));
+		editTextArea_breite.setHorizontalAlignment(SwingConstants.LEFT);
+		cp.add(editTextArea_breite);
+			
+		editTextArea_farbe= new JTextField(String.valueOf(el.block.color));
+		editTextArea_farbe.setHorizontalAlignment(SwingConstants.LEFT);
+			//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+			cp.add(editTextArea_farbe);			
+			this.setVisible(true);
+			
+		
+			editTextArea_hoehe.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String a = editTextArea_hoehe.getText();
+					el.block.height = Integer.valueOf(a);
+					MainClass.aendereEigenschaften(el);
+				}
+			});
+			editTextArea_breite.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String a = editTextArea_breite.getText();
+					el.block.width = Integer.valueOf(a);
+					MainClass.aendereEigenschaften(el);
+				}
+			});
+			editTextArea_farbe.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String farbe = editTextArea_farbe.getText();
+					switch(farbe.toLowerCase()) {
+						case "rot": el.block.color = Color.RED;
+						case "blau": el.block.color = Color.BLUE;
+						case "grün": el.block.color = Color.GREEN;
+						case "schwarz": el.block.color = Color.BLACK;
+						case "weiß": el.block.color = Color.WHITE;
+						case "orange": el.block.color = Color.ORANGE;
+						case "gelb": el.block.color = Color.yellow;
+						case "grau": el.block.color = Color.GRAY;	
+					}
+					MainClass.aendereEigenschaften(el);
+				}
+			});	
+			
+	}
+}
+
 class Eigenschaftenfenster_element extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Element el = new Element("", 0, 0, null);
 	JTextField editTextArea_name = new JTextField();
 	JTextField editTextArea_mttf = new JTextField();
@@ -126,7 +219,7 @@ class Eigenschaftenfenster_element extends JFrame{
 		el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 		if(el == null) return;
 			
-		this.setTitle(el.name);
+		this.setTitle("Eigenschaften: "+el.name);
 		this.setResizable(true);
 		this.setLocation(MainFrame.posX, MainFrame.posY);
 		this.setVisible(true);	 
@@ -144,17 +237,17 @@ class Eigenschaftenfenster_element extends JFrame{
 		 this.getContentPane().add(label);
 		 
 		editTextArea_name = new JTextField(el.name);
-		editTextArea_name.setHorizontalAlignment(editTextArea_name.LEFT);
+		editTextArea_name.setHorizontalAlignment(SwingConstants.LEFT);
 		//editTextArea_name.setMaximumSize(new Dimension(200,400));
 		cp.add(editTextArea_name);
 		 
 		editTextArea_mttf = new JTextField(String.valueOf(el.MTTF));
-		editTextArea_mttf.setHorizontalAlignment(editTextArea_mttf.LEFT);
+		editTextArea_mttf.setHorizontalAlignment(SwingConstants.LEFT);
 		//editTextArea_mttf.setMaximumSize(new Dimension(200,400));
 		cp.add(editTextArea_mttf);
 		
 		editTextArea_mttr= new JTextField(String.valueOf(el.MTTR));
-		editTextArea_mttr.setHorizontalAlignment(editTextArea_mttr.LEFT);
+		editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
 		//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
 		cp.add(editTextArea_mttr);			
 		this.setVisible(true);
@@ -185,25 +278,36 @@ class Eigenschaftenfenster_element extends JFrame{
 }
 
 class DropDownMenuElement extends JPopupMenu implements ActionListener {
-	Eigenschaftenfenster_element fenster;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Element zeiger;
+	Eigenschaftenfenster_element eigenschaften_fenster;
+	Aussehenfenster_element aussehen_fenster;
 	ActionListener menuListener;
     JMenuItem Eigenschaften;
-    JMenuItem Option2;
-    JMenuItem Option3;
+    JMenuItem Aussehen;
+    JMenuItem Element_hinzufuegen;
+    JMenuItem Element_loeschen;
+    JMenuItem Struktur_hinzufuegen;
+
     //TODO: optionen erweitern
-    
-   
 
     public DropDownMenuElement(){
     	Eigenschaften = new JMenuItem("Eigenschaften");
-    	Option2 = new JMenuItem("Option2");
-    	Option3 = new JMenuItem("Option3");
-        add(Eigenschaften); add(Option2); add(Option3);
+    	Aussehen = new JMenuItem("Aussehen");
+    	Element_hinzufuegen = new JMenuItem("Element hinzufuegen");
+    	Struktur_hinzufuegen = new JMenuItem("Struktur hinzufuegen");
+    	Element_loeschen = new JMenuItem("Element löschen");
+    	
+        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen); add(Element_hinzufuegen); add(Element_loeschen);
         //Buttons zum Actionlistener hinzufuegen
         	Eigenschaften.addActionListener(this);
-        	Option2.addActionListener(this);
-        	Option3.addActionListener(this);
-
+        	Aussehen.addActionListener(this);
+        	Element_hinzufuegen.addActionListener(this);
+        	Struktur_hinzufuegen.addActionListener(this);
+        	Element_loeschen.addActionListener(this);
     }
 
 
@@ -211,12 +315,23 @@ class DropDownMenuElement extends JPopupMenu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == Eigenschaften) {
-	    	fenster = new Eigenschaftenfenster_element();
-			fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+	    	eigenschaften_fenster = new Eigenschaftenfenster_element();
+	    	eigenschaften_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 		}
-		if(e.getSource() == fenster.editTextArea_name) {
-			fenster.name = fenster.editTextArea_name.getText();
+		if(e.getSource() == Aussehen) {
+			aussehen_fenster = new Aussehenfenster_element();
+			aussehen_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 		}
+		if(e.getSource() == Element_hinzufuegen) {
+			zeiger = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+			if(zeiger != null) {
+				MainClass.serielleStruktur_erweitern(zeiger.name, zeiger.MTTF, zeiger.MTTR,zeiger.block.x, zeiger.block.y);
+			}
+		}
+		if(e.getSource() == Element_loeschen) {
+				MainClass.struktur_verkleinern(MainFrame.posX, MainFrame.posY);
+		}
+		
 	}    
 }
 
@@ -235,7 +350,6 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 
 	public static void main(String[] args) {
 		//frame.init_frame();
-		Eigenschaftenfenster_element el = new Eigenschaftenfenster_element();
 		
 		//System.out.println("test");
 		

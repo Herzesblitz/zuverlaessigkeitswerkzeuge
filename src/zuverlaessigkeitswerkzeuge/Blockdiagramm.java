@@ -54,6 +54,7 @@ class Element extends Komponente{
 
 class Struktur extends Komponente{
 	ArrayList<Komponente> s = new ArrayList<Komponente>();
+	Rahmen rahmen;
 
 	public Struktur(ArrayList<Komponente> k, String name){
 		super(name, 0, 0);
@@ -79,7 +80,10 @@ class Struktur extends Komponente{
 	}
 	
 	public void loeschen(int index) {
-		if(index >= 0 && index < s.size()) s.remove(index);
+		if(index > 0 && index < s.size()) s.remove(index);
+		else if(index == 0) {
+			((Element) s.get(1)).vorg_line = null;
+		}
 		else {
 			System.err.println("Komponente existiert nicht!");
 			System.exit(-1);
