@@ -67,8 +67,12 @@ class Struktur extends Komponente{
 		berechne_MTTF();
 	}
 	
+	/**
+	 * fuegt komponente an index im AL des Parents ein
+	 * @param index
+	 * @param k
+	 */
 	public void einfuegen(int index, Komponente k) {
-		index++;
 		if(index == s.size()-1)s.add(k);
 		else {
 			ArrayList<Komponente> s_ = new ArrayList<>();

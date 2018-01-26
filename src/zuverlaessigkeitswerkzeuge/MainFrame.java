@@ -369,7 +369,7 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 			frame.setResizable(true);
 			frame.setLocation(0, 0);
 			frame.setVisible(true);	 frame.pack();	
-			frame.setSize(aufloesung);
+			frame.setSize(700,700);
 			
 			frame.addMouseMotionListener(this);
 			frame.addMouseListener(this);
@@ -416,8 +416,18 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		if(SwingUtilities.isLeftMouseButton(arg0)) MainClass.elementMarkieren(arg0.getX(), arg0.getY());
-		if(SwingUtilities.isRightMouseButton(arg0)) MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
+		if(SwingUtilities.isLeftMouseButton(arg0)) MainClass.elementMarkieren(posX, posY);
+		if(SwingUtilities.isRightMouseButton(arg0)) {
+			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
+			Element vergleich = MainClass.markedElement;
+			if(!(sucheElement == null)) {
+				if(!(vergleich == null)) {
+					if(vergleich == sucheElement) {
+						MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -457,9 +467,6 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
         //System.out.println("a:"+posX+" "+posY);
     }
 	
-	
-
-
 	void doPop(MouseEvent e){
 		DropDownMenuElement menu = new DropDownMenuElement();
 	    menu.show(e.getComponent(), e.getX(), e.getY());

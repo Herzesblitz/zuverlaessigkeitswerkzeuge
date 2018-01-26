@@ -9,7 +9,7 @@ import java.util.ArrayList;
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass{
 	DropDownMenuElement ddme = new DropDownMenuElement();
-	static Element markedElement;
+	static Element markedElement = null;
 	
 	Frame f = new Frame();   private TextField tf;
 
@@ -119,12 +119,13 @@ public class MainClass{
 			Element neu = new Element(name, MTTF, MTTR, Blockdiagramm.anfang);
 			k.add(neu);
 			Serielle_struktur sr = new Serielle_struktur(k, name, Blockdiagramm.anfang);
+			((Element) sr.s.get(0)).parent = sr;
 			Blockdiagramm.anfang.s.add(sr);
 			zeichenobjekte_eintragen(neu);
 		}
 	
 	//erweitert Komponente um Struktur
-	//nur am Anfang verwenden  
+	//nur am Anfang verwenden  --
 //		public void aufSerielleStruktur_erweitern(String name, int x, int y) {
 //			Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 //			ArrayList<Komponente> k = new ArrayList<>(); k.add(e);
@@ -150,10 +151,11 @@ public class MainClass{
 		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y) {
 			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			int pos = e.parent.s.indexOf(e);
+			System.out.println("nachbar: "+e.name+" "+"parent-pos "+pos);
 				Element neu = new Element(name, MTTF, MTTR, e.parent);
-				neu.block.x = e.block.x + e.block.width + 10; neu.block.y = e.block.y;
-				neu.vorg_line = new Line(e.block.x + e.block.width, e.block.y + e.block.height/2, neu.block.x-10, neu.block.y +neu.block.height/2, Color.black);
-			e.parent.einfuegen(pos, neu);
+				neu.block.x = e.block.x + e.block.width+10; neu.block.y = e.block.y;
+				neu.vorg_line = new Line(neu.block.x,neu.block.y +neu.block.height/2,e.block.x + e.block.width,e.block.y + e.block.height/2, Color.black);
+			e.parent.einfuegen(pos+1, neu);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -186,18 +188,45 @@ public class MainClass{
 		//TODO: 
 		public static void struktur_verkleinern(int x, int y) {
 			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+			if(e.equals(null)) {
+				System.err.println("Mauszeiger ist auf keinem Element!");
+				return;
+			}
 			System.out.println("lösche: "+e.name);
 
 			mc.zeichenobjekte_austragen(e);
 			mf.zeichneObjekte(MainFrame.jc);
+			
+			Element nachfolger = null;
+			if(e.parent.s.indexOf(e) < e.parent.s.size()-1) {
+				nachfolger = (Element) e.parent.s.get(e.parent.s.indexOf(e)+1);
+				System.out.println("parent: "+nachfolger.parent.name);
+				System.out.println(nachfolger.parent.s.size());
+			}
+			//fix um bei 3+ Elementen linien richtig zu ziehen
+			if(e.parent.s.size() >2) {
+				int pos = e.parent.s.indexOf(e);
+				if(pos == 0)MainFrame.jc.zeichnen.remove(MainFrame.jc.zeichnen.indexOf(((Element)e.parent.s.get(1)).vorg_line));
+				e.parent.loeschen(pos);
+						//fix mittleres Element loeschens
+						if(!nachfolger.equals(null)) {
+							if(nachfolger.parent.s.size() > 1 ) {
+								Element vorgaenger = ((Element) nachfolger.parent.s.get(nachfolger.parent.s.indexOf(nachfolger)-1));
+								nachfolger.vorg_line.x2 = vorgaenger.block.x + vorgaenger.block.width;
+								nachfolger.vorg_line.y2 = vorgaenger.block.y + vorgaenger.block.height/2;
+							}
+						}
+			}
+			//fix um bei 2 Elementen die Linie vom 2. Element zu löschen
+Hier weiter machen 
+			if(e.parent.s.size() ==2) {
+				int pos = e.parent.s.indexOf(e);
+				if(pos == 0) {
+					((Element) e.parent.s.get(1)).vorg_line = null;
+				}
+			}
 
-			int pos = e.parent.s.indexOf(e);
-			if(pos == 0)MainFrame.jc.zeichnen.remove(MainFrame.jc.zeichnen.indexOf(((Element)e.parent.s.get(1)).vorg_line));
-			e.parent.loeschen(pos);
-			//TODO: dirty fix fuer darstellung der line
-//					markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, mf.posX, mf.posY);
-//					elementVerschieben(0, 0);
-//					markedElement = null;
+			
 			
 			//wenn Struktur leer, Struktur loeschen
 			if(e.parent.s.size() == 0) {
@@ -234,8 +263,7 @@ public class MainClass{
 						//Lineberechnung
 						//spezialfall: erstes Element in AL der parent-struktur
 //TODO: wird nie aufgerufen	
-							if(markedElement.parent.s.get(0) == markedElement) {
-								System.out.println("erstes!: ");
+							if(markedElement.parent.s.get(0).equals(markedElement) && markedElement.parent.s.size() >1) {
 								((Element) markedElement.parent.s.get(1)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
 								((Element) markedElement.parent.s.get(1)).vorg_line.y2 = markedElement.block.y + markedElement.block.height / 2;
 		//							System.out.println(((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 + " "+ ((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 );
@@ -284,19 +312,18 @@ public class MainClass{
 				public static void elementMarkieren(int x, int y) {
 					if(markedElement != null) {			
 						markedElement.block.color = markedElement.blue;
-						if(markedElement ==  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y)) {
+						if(markedElement.equals(Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y))) {
 							markedElement = null;
 							mf.zeichneObjekte(MainFrame.jc);
 							return;
 						}
+						markedElement = null;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
 		            markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 					if(markedElement==null)return;
 					else {	
-						
-						System.out.println(markedElement.name);
-		
+						//System.out.println(markedElement.name);
 						markedElement.block.color = markedElement.red;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
@@ -325,7 +352,7 @@ public class MainClass{
 				private void zeichenobjekte_eintragen(Komponente S) {
 						if(S instanceof Struktur) {
 							for(Komponente k: ((Struktur) S).s){
-								 MainFrame.jc.zeichnen.add(((Struktur) S).rahmen);
+								MainFrame.jc.zeichnen.add(((Struktur) S).rahmen);
 								zeichenobjekte_eintragen(k);
 							}
 						}
