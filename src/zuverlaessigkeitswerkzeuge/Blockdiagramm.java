@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 class Komponente{
 	String name;
 	double zuverlassigkeit=0;
@@ -56,8 +57,10 @@ class Struktur extends Komponente{
 	ArrayList<Komponente> s = new ArrayList<Komponente>();
 	Rahmen rahmen;
 
-	public Struktur(ArrayList<Komponente> k, String name){
+
+	public Struktur(ArrayList<Komponente> k, String name, int x, int y, int height, int width){
 		super(name, 0, 0);
+		rahmen = new Rahmen(name, x, y, height, width);
 		this.s = k;
 	}
 	
@@ -121,12 +124,11 @@ class Struktur extends Komponente{
 
 class Parallel_struktur extends Struktur{
 	Struktur parent;
-	
-	public Parallel_struktur(ArrayList<Komponente> k, String name, Struktur parent){
-		super(k, name);
-		this.parent = parent;
-		
 
+	public Parallel_struktur(ArrayList<Komponente> k, String name, Struktur parent, int x, int y, int height, int width){
+		super(k, name, x, y, height, width);
+		this.parent = parent;
+		rahmen = new Rahmen(name,x, y, height, width);
 	}
 	
 	public void berechneWerte() {
@@ -172,11 +174,11 @@ class Parallel_struktur extends Struktur{
 class Serielle_struktur extends Struktur{
 	Struktur parent;
 
-	public Serielle_struktur(ArrayList<Komponente> k, String name, Struktur parent){
-		super(k, name);
+	public Serielle_struktur(ArrayList<Komponente> k, String name, Struktur parent, int x, int y, int height, int width){
+		super(k, name, x, y, height, width);
 		this.parent = parent;
 	}
-	
+		
 	public void berechneWerte() {
 		this.berechne_verfuegbarkeit();
 		berechne_MTTF();
@@ -218,9 +220,9 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 	int k;
 	Struktur parent;
 	
-	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> K, String name, int k, Struktur parent) {
-		super(K, name);
-		this.k = k;
+	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> k, String name, Struktur parent, int l,  int x, int y, int height, int width) {
+		super(k, name, x, y, height, width);
+		this.k = l;
 		this.parent = parent;
 		
 		
@@ -278,7 +280,33 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 
 public class Blockdiagramm {
 	static Komponente zeiger = new Komponente("", 1, 1); 
-	static Struktur anfang = new Struktur(new ArrayList<Komponente>(), "");
+	static Struktur anfang = new Struktur(new ArrayList<Komponente>(), "anfang", 0, 0, 0, 0);
+	
+	//TODO: wahrscheinlich effizientere Algorithmus als 2*O(|Komponenten|) ...
+	public static Struktur sucheStruktur(Komponente a, int x, int y) {
+		//System.out.println(a.name);
+		if(a instanceof Struktur) {
+			if(y>= (((Struktur) a).rahmen).y && y <= (((Struktur) a).rahmen).y +  (((Struktur) a).rahmen).width) {
+				if(x>= (((Struktur) a).rahmen).x && x <= (((Struktur) a).rahmen).x +  (((Struktur) a).rahmen).width) {
+					//System.out.println("passt: "+a.name);
+					//return (Struktur) a -  würde die erste Struktur zurueckgeben die diesen Kriterien entspricht => falsch! 
+					//stattdessen: //TODO: testen!!
+					if(((Struktur) a).s.size() > 0) {
+						for(Komponente k: ((Struktur) a).s)return sucheStruktur(k, x, y);
+					}
+					else return (Struktur) a;
+				}
+			}
+			for(Komponente k: ((Struktur) a).s) {
+				Struktur s=sucheStruktur(k, x, y);
+				if(s==null) continue;
+				return sucheStruktur(k, x, y);
+			}
+		}
+		return null;
+	}
+
+	
 	
 	public static Element sucheElement(Komponente a, int x, int y) {
 		if(a instanceof Element) {
@@ -300,11 +328,11 @@ public class Blockdiagramm {
 	
 	public static void main(String[] args) {
 		ArrayList<Komponente> k_s=new ArrayList<Komponente>(); 
-		Serielle_struktur system = new Serielle_struktur(k_s, "system", anfang);
+		Serielle_struktur system = new Serielle_struktur(k_s, "system", anfang, 0, 0, 0, 0);
 
 		//main computer
 		ArrayList<Komponente> k_mc=new ArrayList<Komponente>(); 
-		Serielle_struktur main_computer = new Serielle_struktur(k_mc, "main computer", system);
+		Serielle_struktur main_computer = new Serielle_struktur(k_mc, "main computer", system, 0, 0, 0, 0);
 			Element cpu = new Element("CPU", 1950, 1.2, main_computer);
 			cpu.block.x = 0; cpu.block.y = 0;
 			Element mem = new Element("memory", 1500, 2.0, main_computer);
@@ -319,7 +347,7 @@ public class Blockdiagramm {
 		
 		//power
 		ArrayList<Komponente> k_p =new ArrayList<Komponente>(); 
-		Parallel_struktur power = new Parallel_struktur(k_p, "power", system);
+		Parallel_struktur power = new Parallel_struktur(k_p, "power", system, 0, 0, 0, 0);
 			Element ups1 = new Element("ups1", 15800, 3.75, power);
 			Element ups2 = new Element("ups2", 15800, 3.75, power);
 			ups1.block.x = 303; ups1.block.y = 0;
@@ -333,7 +361,7 @@ public class Blockdiagramm {
 		
 		//disks
 		ArrayList<Komponente> k_d =new ArrayList<Komponente>(); 
-		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", 3, system);
+		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", system, 3, 0, 0, 0, 0);
 			Element d1 = new Element("disk1",1800,4.5, disks);
 			Element d2 = new Element("disk2",1800,4.5, disks);
 			Element d3 = new Element("disk3",1800,4.5, disks);
@@ -359,9 +387,6 @@ public class Blockdiagramm {
 		k_s.add(main_computer);
 		anfang.s.add(system);
 		system.ausgabe_werte();
-		
-		
-		System.out.println(sucheElement(system, 450, 250).name);
 	}
 	
 	

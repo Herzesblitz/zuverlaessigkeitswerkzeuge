@@ -1,6 +1,5 @@
 package zuverlaessigkeitswerkzeuge;
 
-//TODO Strukturen bekommen Darstellung: Umrandung der Elemente, Name an Umrandung, ggf. MTTF etc.
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -35,10 +34,15 @@ abstract class _2DObject{
 class Rahmen extends _2DObject{
 	   int x; int y; int height; int width;
 	   String name ="-";
+	   Color color;
 	   double mttf= 0;
 	   double mttr= 0;
 	   double verfuegbarkeit;
 	   double zuverlaessigkeit;
+	   
+	   public Rahmen(String name, int x, int y, int height, int width) {
+		   this.name = name; this.x = x; this.y = y; this.height = height; this.width = width; 
+	   }
 }
 
 class Block extends _2DObject{
@@ -71,11 +75,11 @@ class JCanvas extends JComponent
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-ArrayList<_2DObject> zeichnen = new ArrayList<>();
+	ArrayList<_2DObject> zeichnen = new ArrayList<>();
    
    public void paintComponent(Graphics g) 
    {
-	   
+	   //System.out.println("zeichne ...");
 	  for(_2DObject a: zeichnen) {
 		  //System.out.println(a.toString());
 		  if(a instanceof Block) {  
@@ -105,8 +109,17 @@ ArrayList<_2DObject> zeichnen = new ArrayList<>();
 		  if(a instanceof Rahmen) {
 			  Graphics2D g2 = (Graphics2D) g;
 			    super.paintComponent(g);
-			    g2.setColor(Color.gray);
+			    g2.setColor(((Rahmen) a).color);
+			    	//System.out.println("Rahmen: "+((Rahmen) a).name+" "+((Rahmen) a).x+" "+((Rahmen) a).y+" "+((Rahmen) a).width+" "+((Rahmen) a).height);
 			    g2.drawRect(((Rahmen) a).x, ((Rahmen) a).y, ((Rahmen) a).width, ((Rahmen) a).height);
+			    g2.drawString(((Rahmen) a).name, ((Rahmen) a).x+((Rahmen) a).width/2 , ((Rahmen) a).y +10);
+			    
+			    String mttf = String.valueOf(((Rahmen) a).mttf); 
+			    String mttr = String.valueOf(((Rahmen) a).mttr); 
+			    g2.setColor(Color.black);
+			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9) , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -30);
+			    g2.setColor(Color.black);
+			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height) - 20);
 		  }
 		  
 	  }
@@ -116,227 +129,403 @@ ArrayList<_2DObject> zeichnen = new ArrayList<>();
    
    
  }
-//TODO: actionlistener
-//TODO: klasse fuer eigenschaften fenster
 
-class Aussehenfenster_element extends JFrame{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	Element el = new Element("", 0, 0, null);
-	JTextField editTextArea_hoehe;
-	JTextField editTextArea_breite;
-	JTextField editTextArea_farbe;
-	
-	public Aussehenfenster_element() {
-		el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-		if(el == null) return;
-		
-		this.setTitle("Aussehen: "+el.name);
-		this.setResizable(true);
-		this.setLocation(MainFrame.posX, MainFrame.posY);
-		this.setVisible(true);	 
-		this.setSize(500,200);
-		
-		Container cp = getContentPane();
-		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-		
-		//INPUT TEXT AREA
-		JLabel label=new JLabel("Aussehen verändern: Höhe, Breite, Farbe");
-		label.setSize(100, 100);
-		
-		BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
-		cp.setLayout(layout);
-		 this.getContentPane().add(label);
-		 
-		 editTextArea_hoehe = new JTextField(el.block.height);
-		 editTextArea_hoehe.setHorizontalAlignment(SwingConstants.LEFT);
-			cp.add(editTextArea_hoehe);
+//KLassen für DropDownMenu Element
 			 
-		editTextArea_breite = new JTextField(String.valueOf(el.block.width));
-		editTextArea_breite.setHorizontalAlignment(SwingConstants.LEFT);
-		cp.add(editTextArea_breite);
 			
-		editTextArea_farbe= new JTextField(String.valueOf(el.block.color));
-		editTextArea_farbe.setHorizontalAlignment(SwingConstants.LEFT);
-			//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-			cp.add(editTextArea_farbe);			
-			this.setVisible(true);
+			class Aussehenfenster_element extends JFrame{
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				Element el = new Element("", 0, 0, null);
+				JTextField editTextArea_hoehe;
+				JTextField editTextArea_breite;
+				JTextField editTextArea_farbe;
+				
+				public Aussehenfenster_element() {
+					el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					if(el == null) return;
+					
+					this.setTitle("Aussehen: "+el.name);
+					this.setResizable(true);
+					this.setLocation(MainFrame.posX, MainFrame.posY);
+					this.setVisible(true);	 
+					this.setSize(500,200);
+					
+					Container cp = getContentPane();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					
+					//INPUT TEXT AREA
+					JLabel label=new JLabel("Aussehen verändern: Höhe, Breite, Farbe");
+					label.setSize(100, 100);
+					
+					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
+					cp.setLayout(layout);
+					 this.getContentPane().add(label);
+					 
+					 editTextArea_hoehe = new JTextField(el.block.height);
+					 editTextArea_hoehe.setHorizontalAlignment(SwingConstants.LEFT);
+						cp.add(editTextArea_hoehe);
+						 
+					editTextArea_breite = new JTextField(String.valueOf(el.block.width));
+					editTextArea_breite.setHorizontalAlignment(SwingConstants.LEFT);
+					cp.add(editTextArea_breite);
+						
+					editTextArea_farbe= new JTextField(String.valueOf(el.block.color));
+					editTextArea_farbe.setHorizontalAlignment(SwingConstants.LEFT);
+						//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+						cp.add(editTextArea_farbe);			
+						this.setVisible(true);
+						
+					
+						editTextArea_hoehe.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								String a = editTextArea_hoehe.getText();
+								el.block.height = Integer.valueOf(a);
+								MainClass.aendereEigenschaften(el);
+							}
+						});
+						editTextArea_breite.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								String a = editTextArea_breite.getText();
+								el.block.width = Integer.valueOf(a);
+								MainClass.aendereEigenschaften(el);
+							}
+						});
+						editTextArea_farbe.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								String farbe = editTextArea_farbe.getText();
+								switch(farbe.toLowerCase()) {
+									case "rot": el.block.color = Color.RED;
+									case "blau": el.block.color = Color.BLUE;
+									case "grün": el.block.color = Color.GREEN;
+									case "schwarz": el.block.color = Color.BLACK;
+									case "weiß": el.block.color = Color.WHITE;
+									case "orange": el.block.color = Color.ORANGE;
+									case "gelb": el.block.color = Color.yellow;
+									case "grau": el.block.color = Color.GRAY;	
+								}
+								MainClass.aendereEigenschaften(el);
+							}
+						});	
+						
+				}
+			}
 			
-		
-			editTextArea_hoehe.addActionListener(new ActionListener() {
+			class Eigenschaftenfenster_element extends JFrame{
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				Element el = new Element("", 0, 0, null);
+				JTextField editTextArea_name = new JTextField();
+				JTextField editTextArea_mttf = new JTextField();
+				JTextField editTextArea_mttr = new JTextField();
+			
+				 //Kontextfenster Element
+					String name; double mttr; double mttf;
+				
+				public Eigenschaftenfenster_element() {
+					el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					if(el == null) return;
+						
+					this.setTitle("Eigenschaften: "+el.name);
+					this.setResizable(true);
+					this.setLocation(MainFrame.posX, MainFrame.posY);
+					this.setVisible(true);	 
+					this.setSize(500,200);
+					
+					Container cp = getContentPane();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					
+					//INPUT TEXT AREA
+					JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
+					label.setSize(100, 100);
+					
+					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
+					cp.setLayout(layout);
+					 this.getContentPane().add(label);
+					 
+					editTextArea_name = new JTextField(el.name);
+					editTextArea_name.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_name.setMaximumSize(new Dimension(200,400));
+					cp.add(editTextArea_name);
+					 
+					editTextArea_mttf = new JTextField(String.valueOf(el.MTTF));
+					editTextArea_mttf.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttf.setMaximumSize(new Dimension(200,400));
+					cp.add(editTextArea_mttf);
+					
+					editTextArea_mttr= new JTextField(String.valueOf(el.MTTR));
+					editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_mttr);			
+					this.setVisible(true);
+					
+					editTextArea_name.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							el.name = editTextArea_name.getText();
+							MainClass.aendereEigenschaften(el);
+						}
+					});
+					editTextArea_mttf.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							el.MTTF = Double.valueOf(editTextArea_mttf.getText());
+							MainClass.aendereEigenschaften(el);
+						}
+					});
+					editTextArea_mttr.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							el.MTTR = Double.valueOf(editTextArea_mttr.getText());
+							MainClass.aendereEigenschaften(el);
+						}
+					});
+					
+				}	
+			}
+			
+			
+			
+			/**
+			 * Klasse die DropDownMenu das bei Rechtsklick auf ein Element entsteht darstellt und deren FUnktionalität implementiert.
+			 * @author Johannes
+			 */
+			class DropDownMenuElement extends JPopupMenu implements ActionListener {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				Element zeiger;
+				Eigenschaftenfenster_element eigenschaften_fenster;
+				Aussehenfenster_element aussehen_fenster;
+				ActionListener menuListener;
+			    JMenuItem Eigenschaften;
+			    JMenuItem Aussehen;
+			    JMenuItem Element_hinzufuegen_dahinter;
+			    JMenuItem Element_loeschen;
+			    JMenuItem Struktur_hinzufuegen;
+			
+			    //TODO: optionen erweitern
+			
+			    public DropDownMenuElement(){
+			    	Eigenschaften = new JMenuItem("Eigenschaften");
+			    	Aussehen = new JMenuItem("Aussehen");
+			    	Element_hinzufuegen_dahinter = new JMenuItem("Element dahinter hinzufuegen");
+			    	Struktur_hinzufuegen = new JMenuItem("Struktur hinzufuegen");
+			    	Element_loeschen = new JMenuItem("Element löschen");
+			    	
+			        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen); add(Element_hinzufuegen_dahinter); add(Element_loeschen);
+			        //Buttons zum Actionlistener hinzufuegen
+			        	Eigenschaften.addActionListener(this);
+			        	Aussehen.addActionListener(this);
+			        	Element_hinzufuegen_dahinter.addActionListener(this);
+			        	Struktur_hinzufuegen.addActionListener(this);
+			        	Element_loeschen.addActionListener(this);
+			    }
+			
+			
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					String a = editTextArea_hoehe.getText();
-					el.block.height = Integer.valueOf(a);
-					MainClass.aendereEigenschaften(el);
-				}
-			});
-			editTextArea_breite.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String a = editTextArea_breite.getText();
-					el.block.width = Integer.valueOf(a);
-					MainClass.aendereEigenschaften(el);
-				}
-			});
-			editTextArea_farbe.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					String farbe = editTextArea_farbe.getText();
-					switch(farbe.toLowerCase()) {
-						case "rot": el.block.color = Color.RED;
-						case "blau": el.block.color = Color.BLUE;
-						case "grün": el.block.color = Color.GREEN;
-						case "schwarz": el.block.color = Color.BLACK;
-						case "weiß": el.block.color = Color.WHITE;
-						case "orange": el.block.color = Color.ORANGE;
-						case "gelb": el.block.color = Color.yellow;
-						case "grau": el.block.color = Color.GRAY;	
+					if(e.getSource() == Eigenschaften) {
+				    	eigenschaften_fenster = new Eigenschaftenfenster_element();
+				    	eigenschaften_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 					}
-					MainClass.aendereEigenschaften(el);
+					if(e.getSource() == Aussehen) {
+						aussehen_fenster = new Aussehenfenster_element();
+						aussehen_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					}
+					if(e.getSource() == Element_hinzufuegen_dahinter) {
+						zeiger = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+						if(zeiger != null) {
+							MainClass.serielleStruktur_nachbar_einf(zeiger.name, zeiger.MTTF, zeiger.MTTR,zeiger.block.x, zeiger.block.y);
+						}
+					}
+					if(e.getSource() == Element_loeschen) {
+							MainClass.struktur_verkleinern(MainFrame.posX, MainFrame.posY);
+					}
+					
+				}    
+			}
+
+//KLassen für DropDownMenu 
+			/**
+			 * Klasse die DropDownMenu das bei Rechtsklick auf leeren Raum entsteht, darstellt und deren FUnktionalität implementiert.
+			 * @author Johannes
+			 *
+			 */
+			class DropDownMenuVoid extends JPopupMenu implements ActionListener{
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				Element zeiger;
+				JMenuItem Element_hinzufuegen;
+			    JMenuItem par_Struktur_hinzufuegen;
+			    JMenuItem ser_Struktur_hinzufuegen;
+
+			    
+			    public DropDownMenuVoid(){
+			    	Element_hinzufuegen = new JMenuItem("Element hinzufügen");
+			    	par_Struktur_hinzufuegen = new JMenuItem("parallele Struktur hinzufügen");
+			    	ser_Struktur_hinzufuegen = new JMenuItem("serielle Struktur hinzufügen");
+			    	
+			    	add(Element_hinzufuegen); add(ser_Struktur_hinzufuegen); add(par_Struktur_hinzufuegen);
+			    	Element_hinzufuegen.addActionListener(this);
+			    	par_Struktur_hinzufuegen.addActionListener(this);
+			    	ser_Struktur_hinzufuegen.addActionListener(this);
+			     }
+			    
+			    
+			    
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(arg0.getSource() == Element_hinzufuegen) {
+						MainClass.Komponente_einf_kontextlos("neue Komponente", 1, 1, MainFrame.posX, MainFrame.posY);
+					}
+					if(arg0.getSource() == ser_Struktur_hinzufuegen) {
+						MainClass.serielleStruktur_einf_kontextlos();
+					}
+					if(arg0.getSource() == par_Struktur_hinzufuegen) {
+						MainClass.paralleleStruktur_einf_kontextlos();
+					}
 				}
-			});	
+			}
 			
-	}
-}
+//KLassen für DropDownMenuStruktur
+			class Eigenschaftenfenster_struktur extends JFrame{
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
-class Eigenschaftenfenster_element extends JFrame{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	Element el = new Element("", 0, 0, null);
-	JTextField editTextArea_name = new JTextField();
-	JTextField editTextArea_mttf = new JTextField();
-	JTextField editTextArea_mttr = new JTextField();
+				Struktur sr = new Struktur(new ArrayList<Komponente>(), "", 0, 0, 0, 0);
+					
+				JTextField editTextArea_name = new JTextField();
+				JTextField editTextArea_mttf = new JTextField();
+				JTextField editTextArea_mttr = new JTextField();
+			
+				 //Kontextfenster Element
+					String name; double mttr; double mttf;
+				
+				public Eigenschaftenfenster_struktur() {
+					sr = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					if(sr == null) return;
 
-	 //Kontextfenster Element
-		String name; double mttr; double mttf;
+					this.setTitle("Eigenschaften: "+sr.name);
+					this.setResizable(true);
+					this.setLocation(MainFrame.posX, MainFrame.posY);
+					this.setVisible(true);	 
+					this.setSize(500,200);
+					
+					Container cp = getContentPane();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					
+					//INPUT TEXT AREA
+					JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
+					label.setSize(100, 100);
+					
+					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
+					cp.setLayout(layout);
+					 this.getContentPane().add(label);
+					 
+					editTextArea_name = new JTextField(sr.name);
+					editTextArea_name.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_name.setMaximumSize(new Dimension(200,400));
+					cp.add(editTextArea_name);
+					 
+					editTextArea_mttf = new JTextField(String.valueOf(sr.MTTF));
+					editTextArea_mttf.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttf.setMaximumSize(new Dimension(200,400));
+					cp.add(editTextArea_mttf);
+					
+					editTextArea_mttr= new JTextField(String.valueOf(sr.MTTR));
+					editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_mttr);			
+					this.setVisible(true);
+					
+					editTextArea_name.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							sr.name = editTextArea_name.getText();
+							MainClass.aendereEigenschaften(sr);
+						}
+					});
+					editTextArea_mttf.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							sr.MTTF = Double.valueOf(editTextArea_mttf.getText());
+							MainClass.aendereEigenschaften(sr);
+						}
+					});
+					editTextArea_mttr.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							sr.MTTR = Double.valueOf(editTextArea_mttr.getText());
+							MainClass.aendereEigenschaften(sr);
+						}
+					});
+				}
+				
+				
+			}
+			
+			/**
+			 * Klasse die DropDownMenuStruktur das bei Rechtsklick auf Stuktur entsteht, darstellt und deren FUnktionalität implementiert.
+			 * @author Johannes
+			 *
+			 */
+			class DropDownMenuStruktur extends JPopupMenu implements ActionListener{
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				Struktur zeiger;
+				JMenuItem Struktureigenschaften;
+				JMenuItem Element_einfügen;
+				JMenuItem Struktur_einfügen;
+				Eigenschaftenfenster_struktur eig_fenster;
+				
+				 public DropDownMenuStruktur(){
+					 Struktureigenschaften = new JMenuItem("Struktureigenschaften");
+					 Element_einfügen = new JMenuItem("Element einfügen");
+					 Struktur_einfügen = new JMenuItem("Struktur einfügen");
+
+					 add(Struktureigenschaften); add(Element_einfügen);	 add(Element_einfügen);
+					 Struktureigenschaften.addActionListener(this); Element_einfügen.addActionListener(this);  Struktur_einfügen.addActionListener(this);
+					
+				 }
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(arg0.getSource() == Struktureigenschaften) {
+						eig_fenster = new Eigenschaftenfenster_struktur();
+						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					}
+					if(arg0.getSource() == Element_einfügen) {
+						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+						if(zeiger instanceof Serielle_struktur) {
+							MainClass.serielleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Serielle_struktur) zeiger);
+						}
+						if(zeiger instanceof Parallel_struktur) {
+							
+						}
+					}
+					if(arg0.getSource() == Struktur_einfügen) {
+						
+					}
+				}
+
+
+			}
 	
-	public Eigenschaftenfenster_element() {
-		el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-		if(el == null) return;
-			
-		this.setTitle("Eigenschaften: "+el.name);
-		this.setResizable(true);
-		this.setLocation(MainFrame.posX, MainFrame.posY);
-		this.setVisible(true);	 
-		this.setSize(500,200);
-		
-		Container cp = getContentPane();
-		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-		
-		//INPUT TEXT AREA
-		JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
-		label.setSize(100, 100);
-		
-		BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
-		cp.setLayout(layout);
-		 this.getContentPane().add(label);
-		 
-		editTextArea_name = new JTextField(el.name);
-		editTextArea_name.setHorizontalAlignment(SwingConstants.LEFT);
-		//editTextArea_name.setMaximumSize(new Dimension(200,400));
-		cp.add(editTextArea_name);
-		 
-		editTextArea_mttf = new JTextField(String.valueOf(el.MTTF));
-		editTextArea_mttf.setHorizontalAlignment(SwingConstants.LEFT);
-		//editTextArea_mttf.setMaximumSize(new Dimension(200,400));
-		cp.add(editTextArea_mttf);
-		
-		editTextArea_mttr= new JTextField(String.valueOf(el.MTTR));
-		editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
-		//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-		cp.add(editTextArea_mttr);			
-		this.setVisible(true);
-		
-		editTextArea_name.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				el.name = editTextArea_name.getText();
-				MainClass.aendereEigenschaften(el);
-			}
-		});
-		editTextArea_mttf.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				el.MTTF = Double.valueOf(editTextArea_mttf.getText());
-				MainClass.aendereEigenschaften(el);
-			}
-		});
-		editTextArea_mttr.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				el.MTTR = Double.valueOf(editTextArea_mttr.getText());
-				MainClass.aendereEigenschaften(el);
-			}
-		});
-		
-	}	
-}
-
-class DropDownMenuElement extends JPopupMenu implements ActionListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	Element zeiger;
-	Eigenschaftenfenster_element eigenschaften_fenster;
-	Aussehenfenster_element aussehen_fenster;
-	ActionListener menuListener;
-    JMenuItem Eigenschaften;
-    JMenuItem Aussehen;
-    JMenuItem Element_hinzufuegen;
-    JMenuItem Element_loeschen;
-    JMenuItem Struktur_hinzufuegen;
-
-    //TODO: optionen erweitern
-
-    public DropDownMenuElement(){
-    	Eigenschaften = new JMenuItem("Eigenschaften");
-    	Aussehen = new JMenuItem("Aussehen");
-    	Element_hinzufuegen = new JMenuItem("Element hinzufuegen");
-    	Struktur_hinzufuegen = new JMenuItem("Struktur hinzufuegen");
-    	Element_loeschen = new JMenuItem("Element löschen");
-    	
-        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen); add(Element_hinzufuegen); add(Element_loeschen);
-        //Buttons zum Actionlistener hinzufuegen
-        	Eigenschaften.addActionListener(this);
-        	Aussehen.addActionListener(this);
-        	Element_hinzufuegen.addActionListener(this);
-        	Struktur_hinzufuegen.addActionListener(this);
-        	Element_loeschen.addActionListener(this);
-    }
-
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource() == Eigenschaften) {
-	    	eigenschaften_fenster = new Eigenschaftenfenster_element();
-	    	eigenschaften_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-		}
-		if(e.getSource() == Aussehen) {
-			aussehen_fenster = new Aussehenfenster_element();
-			aussehen_fenster.el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-		}
-		if(e.getSource() == Element_hinzufuegen) {
-			zeiger = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-			if(zeiger != null) {
-				MainClass.serielleStruktur_erweitern(zeiger.name, zeiger.MTTF, zeiger.MTTR,zeiger.block.x, zeiger.block.y);
-			}
-		}
-		if(e.getSource() == Element_loeschen) {
-				MainClass.struktur_verkleinern(MainFrame.posX, MainFrame.posY);
-		}
-		
-	}    
-}
-
-
-
 public class MainFrame  extends JFrame implements MouseMotionListener, MouseListener, KeyListener{
 	static int pressedX; static int pressedY; static int posX; static int posY; 
 	static int deltaX; static int deltaY;
@@ -345,6 +534,9 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	static JCanvas jc = new JCanvas();
 	static MainFrame frame=new MainFrame();
 	public DropDownMenuElement ddme;
+	public DropDownMenuVoid ddmv;
+	public DropDownMenuStruktur ddms;
+
 	
 	private static final long serialVersionUID = 1L;
 
@@ -364,7 +556,7 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	public void init_frame() {		
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
-			System.out.println(aufloesung.width+" "+aufloesung.height);
+			//System.out.println(aufloesung.width+" "+aufloesung.height);
 			frame.setTitle("Zuverlässigkeitswerkzeuge");
 			frame.setResizable(true);
 			frame.setLocation(0, 0);
@@ -389,74 +581,93 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	
 	public void zeichneObjekte(JCanvas jc) {
 //		for(_2DObject d: jc.zeichnen) {
-//			if(d instanceof Block)System.out.println(((Block) d).x);
-//			if(d instanceof Line)System.out.println(((Line) d).x1);
+//			if(d instanceof Block)System.out.println("b: "+((Block) d).name+" "+((Block) d).color);
+//			if(d instanceof Line)System.out.println("l: "+((Line) d).painted);
+//			if(d instanceof Rahmen)System.out.println("r: "+((Rahmen) d).name+" "+((Rahmen) d).color);
 //		}
 		frame.getContentPane().add(jc);
+		frame.revalidate();
 		frame.repaint();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 		keyTyped = arg0.getKeyChar();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		if(SwingUtilities.isLeftMouseButton(arg0)) MainClass.elementMarkieren(posX, posY);
+		if(SwingUtilities.isLeftMouseButton(arg0)) {
+			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
+			if(!(sucheElement == null)) {
+				MainClass.elementMarkieren(posX, posY);
+			}
+			else if(sucheElement == null) {
+				//System.out.println("starte suche nach Struktur ...");
+				Struktur sucheStruktur = Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY);
+				if(sucheStruktur != null) {
+					System.out.println("Struktur markiert: "+sucheStruktur.name);
+					MainClass.strukturMarkieren(posX, posY);
+				}
+			}
+		}
 		if(SwingUtilities.isRightMouseButton(arg0)) {
 			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
 			Element vergleich = MainClass.markedElement;
 			if(!(sucheElement == null)) {
 				if(!(vergleich == null)) {
-					if(vergleich == sucheElement) {
-						MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
+					if(vergleich == sucheElement) {					
+//TODO: funzt? dann entsprechende fkt in mc löschen!						//MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
+						MainClass.markedElement =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, arg0.getX(), arg0.getY());
+						pop_ddme(arg0);
 					}
 				}
+			}
+			else if(Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY) != null) {
+				if(MainClass.markedStruktur != null) {
+					pop_ddms(arg0);
+				}
+			}
+			else {
+				pop_ddmv(arg0);
 			}
 		}
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		pressedX = arg0.getX(); pressedY = arg0.getY(); 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		deltaX = deltaY = 0; 
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		MainClass.elementVerschieben(arg0.getX(),arg0.getY());
+		MainClass.strukturVerschieben(arg0.getX(),arg0.getY());
+
         //System.out.println("d:"+deltaX+" "+deltaY);
 	}
 
@@ -467,9 +678,19 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
         //System.out.println("a:"+posX+" "+posY);
     }
 	
-	void doPop(MouseEvent e){
-		DropDownMenuElement menu = new DropDownMenuElement();
-	    menu.show(e.getComponent(), e.getX(), e.getY());
+	void pop_ddme(MouseEvent e){
+		ddme = new DropDownMenuElement();
+	    ddme.show(e.getComponent(), e.getX(), e.getY());
+	}
+	
+	void pop_ddmv(MouseEvent e) {
+		ddmv = new DropDownMenuVoid();
+		ddmv.show(e.getComponent(), e.getX(), e.getY());
+	}
+	
+	void pop_ddms(MouseEvent e) {
+		ddms = new DropDownMenuStruktur();
+		ddms.show(e.getComponent(), e.getX(), e.getY());
 	}
 
 }

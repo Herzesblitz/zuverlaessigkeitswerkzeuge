@@ -30,7 +30,6 @@ class MK_Serielle_struktur extends MK_Struktur{
 public class MarkovKetten {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
