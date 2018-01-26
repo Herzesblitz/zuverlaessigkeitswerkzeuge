@@ -410,9 +410,12 @@ class JCanvas extends JComponent
 				JTextField editTextArea_name = new JTextField();
 				JTextField editTextArea_mttf = new JTextField();
 				JTextField editTextArea_mttr = new JTextField();
+				JTextField editTextArea_width = new JTextField();
+				JTextField editTextArea_heigth = new JTextField();
+
 			
 				 //Kontextfenster Element
-					String name; double mttr; double mttf;
+					String name; double mttr; double mttf; int width; int heigth;
 				
 				public Eigenschaftenfenster_struktur() {
 					sr = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
@@ -448,7 +451,17 @@ class JCanvas extends JComponent
 					editTextArea_mttr= new JTextField(String.valueOf(sr.MTTR));
 					editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-					cp.add(editTextArea_mttr);			
+					cp.add(editTextArea_mttr);		
+					
+					editTextArea_heigth= new JTextField(Integer.valueOf(String.valueOf(sr.rahmen.height)));
+					editTextArea_heigth.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_heigth);		
+					
+					editTextArea_width= new JTextField(Integer.valueOf(String.valueOf(sr.rahmen.width)));
+					editTextArea_width.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_width);		
 					this.setVisible(true);
 					
 					editTextArea_name.addActionListener(new ActionListener() {
@@ -472,6 +485,21 @@ class JCanvas extends JComponent
 							MainClass.aendereEigenschaften(sr);
 						}
 					});
+					editTextArea_width.addActionListener(new ActionListener() {			
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							sr.rahmen.width = Integer.valueOf(editTextArea_width.getText());
+							MainClass.aendereEigenschaften(sr);
+						}
+					});
+					editTextArea_heigth.addActionListener(new ActionListener() {			
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							sr.rahmen.height = Integer.valueOf(editTextArea_heigth.getText());
+							MainClass.aendereEigenschaften(sr);
+						}
+					});
+					
 				}
 				
 				
@@ -602,42 +630,54 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		keyTyped = arg0.getKeyChar();
+		if(keyTyped == '') {
+			System.exit(0);
+		}
+		System.out.println(keyTyped);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		if(SwingUtilities.isLeftMouseButton(arg0)) {
-			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
+			//System.out.println("leftclick");
+			Element sucheElement =Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, posX, posY);
 			if(!(sucheElement == null)) {
-				MainClass.elementMarkieren(posX, posY);
+				//System.out.println("Element mauszeiger: "+sucheElement.name);
+				MainClass.elementMarkieren(sucheElement);
 			}
 			else if(sucheElement == null) {
-				//System.out.println("starte suche nach Struktur ...");
 				Struktur sucheStruktur = Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY);
 				if(sucheStruktur != null) {
-					System.out.println("Struktur markiert: "+sucheStruktur.name);
-					MainClass.strukturMarkieren(posX, posY);
+					if(sucheStruktur.equals(MainClass.mc.bd.anfang))System.out.println("anfang");
+					else {
+						//System.out.println("Struktur mauszeiger: "+sucheStruktur.name);
+						MainClass.strukturMarkieren(sucheStruktur);
+					}			
 				}
+				//else System.out.println("keine Struktur gefunden");
 			}
 		}
 		if(SwingUtilities.isRightMouseButton(arg0)) {
-			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
+			Element sucheElement =Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, posX, posY);
+			Struktur sucheStruktur = Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY);
 			Element vergleich = MainClass.markedElement;
 			if(!(sucheElement == null)) {
 				if(!(vergleich == null)) {
 					if(vergleich == sucheElement) {					
 //TODO: funzt? dann entsprechende fkt in mc löschen!						//MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
-						MainClass.markedElement =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, arg0.getX(), arg0.getY());
+						MainClass.markedElement =  Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, arg0.getX(), arg0.getY());
 						pop_ddme(arg0);
 					}
 				}
 			}
-			else if(Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY) != null) {
+			else if(sucheStruktur != null && !sucheStruktur.equals(MainClass.mc.bd.anfang)) {
+				System.out.println("Struktur ausgewählt: "+sucheStruktur.name);
 				if(MainClass.markedStruktur != null) {
 					pop_ddms(arg0);
 				}
 			}
 			else {
+				System.out.println("ins nichts geklickte");
 				pop_ddmv(arg0);
 			}
 		}
@@ -665,8 +705,14 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		MainClass.elementVerschieben(arg0.getX(),arg0.getY());
-		MainClass.strukturVerschieben(arg0.getX(),arg0.getY());
+		if(MainClass.markedElement != null) {
+			MainClass.markedStruktur = null;
+			MainClass.elementVerschieben(arg0.getX(),arg0.getY());
+		}
+		if(MainClass.markedStruktur != null) {
+			MainClass.markedElement = null;
+			MainClass.strukturVerschieben(arg0.getX(),arg0.getY());
+		}
 
         //System.out.println("d:"+deltaX+" "+deltaY);
 	}

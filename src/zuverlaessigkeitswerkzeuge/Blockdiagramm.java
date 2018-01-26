@@ -282,30 +282,48 @@ public class Blockdiagramm {
 	static Komponente zeiger = new Komponente("", 1, 1); 
 	static Struktur anfang = new Struktur(new ArrayList<Komponente>(), "anfang", 0, 0, 0, 0);
 	
-	//TODO: wahrscheinlich effizientere Algorithmus als 2*O(|Komponenten|) ...
+//	public static Struktur sucheStruktur(Komponente a, int x, int y) {
+//		if(a instanceof Struktur) {
+//			if(y>= (((Struktur) a).rahmen).y && y <= (((Struktur) a).rahmen).y +  (((Struktur) a).rahmen).width || a.equals(Blockdiagramm.anfang)) {
+//				if(x>= (((Struktur) a).rahmen).x && x <= (((Struktur) a).rahmen).x +  (((Struktur) a).rahmen).width  || a.equals(Blockdiagramm.anfang)) {
+//					System.out.println("passt: "+a.name);
+//					//TODO: testen!!
+//					if(((Struktur) a).s.size() > 0) {
+//						for(Komponente k: ((Struktur) a).s) {
+//							//if(!(k instanceof Struktur))return null;
+//							
+//						}		
+//					}
+//					else {					System.out.println("ret2 "+a.name);
+//						return (Struktur) a;
+//					}
+//				}
+//			}	
+//		}
+//		System.out.println("nicht passend"+a.name);
+//		return null;
+//	}
+	
 	public static Struktur sucheStruktur(Komponente a, int x, int y) {
-		//System.out.println(a.name);
-		if(a instanceof Struktur) {
-			if(y>= (((Struktur) a).rahmen).y && y <= (((Struktur) a).rahmen).y +  (((Struktur) a).rahmen).width) {
-				if(x>= (((Struktur) a).rahmen).x && x <= (((Struktur) a).rahmen).x +  (((Struktur) a).rahmen).width) {
-					//System.out.println("passt: "+a.name);
-					//return (Struktur) a -  würde die erste Struktur zurueckgeben die diesen Kriterien entspricht => falsch! 
-					//stattdessen: //TODO: testen!!
+		if(!(a instanceof Struktur))return null;
+		else {
+			if(y>= (((Struktur) a).rahmen).y && y <= (((Struktur) a).rahmen).y +  (((Struktur) a).rahmen).width || a.equals(Blockdiagramm.anfang)) {
+				if(x>= (((Struktur) a).rahmen).x && x <= (((Struktur) a).rahmen).x +  (((Struktur) a).rahmen).width  || a.equals(Blockdiagramm.anfang)) {
 					if(((Struktur) a).s.size() > 0) {
-						for(Komponente k: ((Struktur) a).s)return sucheStruktur(k, x, y);
+						for(Komponente k: ((Struktur) a).s) {
+							if(sucheStruktur(k, x, y) == null) {continue;}
+							return sucheStruktur(k, x, y);
+						}
 					}
-					else return (Struktur) a;
+					return (Struktur) a;
 				}
 			}
-			for(Komponente k: ((Struktur) a).s) {
-				Struktur s=sucheStruktur(k, x, y);
-				if(s==null) continue;
-				return sucheStruktur(k, x, y);
-			}
+			return null;
 		}
-		return null;
 	}
-
+			
+				
+				
 	
 	
 	public static Element sucheElement(Komponente a, int x, int y) {

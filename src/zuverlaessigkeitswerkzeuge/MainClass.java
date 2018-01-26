@@ -6,6 +6,7 @@ import java.awt.TextField;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+
 //Blockdiagrammm wird von links nach rechts(bei seriellen Strukturen) und von oben nach unten (bei parallelen Strukturen)
 public class MainClass{
 	DropDownMenuElement ddme = new DropDownMenuElement();
@@ -51,6 +52,19 @@ public class MainClass{
 		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 		mf.zeichneObjekte(MainFrame.jc);
 	}
+	
+
+	private void test_zeichnen() {	
+		Color red = Color.red;
+    	Block b2 = new Block(100, 100, 200, 200,red);
+    	
+	    MainFrame.jc.zeichnen.add(b2);
+	    
+	    mf.zeichneObjekte(MainFrame.jc);
+	}
+	
+	private void test_blockdiagramm() {	
+	}
 
 	public static void aendereEigenschaften(Element e) {
 		markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10);
@@ -68,18 +82,6 @@ public class MainClass{
 	}
 	
 	
-	private void test_zeichnen() {
-		
-		Color red = Color.red;
-    	Block b2 = new Block(100, 100, 200, 200,red);
-    	
-	    MainFrame.jc.zeichnen.add(b2);
-	    
-	    mf.zeichneObjekte(MainFrame.jc);
-	}
-	
-	private void test_blockdiagramm() {	
-	}
 	
 	private void setDimensions(Struktur S, int heigth, int width) {
 		for(int i=0; i<S.s.size(); i++) {
@@ -126,6 +128,7 @@ public class MainClass{
 			Struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), "neue serielle Struktur", mc.bd.anfang, 100, 100, 500, 1000);
 			Blockdiagramm.anfang.s.add(neu);
 			mc.zeichenobjekte_eintragen(neu);
+			System.out.println(Blockdiagramm.anfang.s.get(0));
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
 		}
@@ -169,7 +172,6 @@ public class MainClass{
 	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
 		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y, Serielle_struktur parent) {
 			markedStruktur.rahmen.color =Color.BLACK; 
-			markedStruktur = null;
 			mf.zeichneObjekte(MainFrame.jc); 
 			//TODO: Struktur nach einf immer noch rot(markiert?)
 			Element neu = new Element(name, MTTF, MTTR, parent);
@@ -374,12 +376,12 @@ public class MainClass{
 				public static void elementGroesseVeraendern(int x, int y) {
 					
 				}
-				//TODO: automatische verkleinerung?
 				
-				public static void elementMarkieren(int x, int y) {
+				//TODO: automatische verkleinerung?	
+				public static void elementMarkieren(Element e) {
 					if(markedElement != null) {			
 						markedElement.block.color = markedElement.blue;
-						if(markedElement.equals(Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y))) {
+						if(markedElement.equals(e)) {
 							markedElement = null;
 							mf.zeichneObjekte(MainFrame.jc);
 							return;
@@ -387,20 +389,20 @@ public class MainClass{
 						markedElement = null;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
-		            markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+		            markedElement =e;
 					if(markedElement==null)return;
 					else {	
 						markedElement.block.color = markedElement.red;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
-					System.out.println("markiertes Element: "+markedElement.name);
+					//System.out.println("markiertes Element: "+markedElement.name);
 				}
 		
 		//Struktur veraendern
-				public static void strukturMarkieren(int x, int y) {
+				public static void strukturMarkieren(Struktur a) {
 					if(markedStruktur != null) {			
 						markedStruktur.rahmen.color = Color.black;
-						if(markedStruktur.equals(Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y))) {
+						if(markedStruktur.equals(a)) {
 							markedStruktur = null;
 							mf.zeichneObjekte(MainFrame.jc);
 							return;
@@ -408,14 +410,15 @@ public class MainClass{
 						markedStruktur = null;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
-					markedStruktur = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
+					markedStruktur = a;
+					//System.out.println(markedStruktur.name);
 					if(markedStruktur==null)return;
 					else {	
-							//System.out.println("markiert: "+markedStruktur.name);
+							System.out.println("markiert: "+markedStruktur.name);
 						markedStruktur.rahmen.color = Color.RED;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
-					System.out.println("markierte Struktur: "+markedStruktur.name);
+					//System.out.println("markierte Struktur: "+markedStruktur.name);
 				}
 				
 				public static void strukturVerschieben(int x, int y) {
@@ -423,6 +426,7 @@ public class MainClass{
 					else {
 						markedStruktur.rahmen.x = x-markedStruktur.rahmen.width/2;
 						markedStruktur.rahmen.y = y-markedStruktur.rahmen.height/2;
+//TODO: mit Devin: wie substrukturen verschieben?
 						for(Komponente k: markedStruktur.s) {
 							if(k instanceof Element)elementVerschieben(((Element) k).block.x+x, ((Element) k).block.y+y);
 							else if(k instanceof Struktur){
@@ -436,7 +440,6 @@ public class MainClass{
 				}
 				
 			
-		//TODO: vllt. paralleltruktur -> k_n struktur umwandeln
 	
 		//Hilfsfunktionen
 				private void zeichenobjekte_austragen(Komponente S) {
