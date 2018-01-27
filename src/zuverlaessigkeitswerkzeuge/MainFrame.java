@@ -520,14 +520,16 @@ class JCanvas extends JComponent
 				JMenuItem Element_einfügen;
 				JMenuItem Struktur_einfügen;
 				Eigenschaftenfenster_struktur eig_fenster;
+				JMenuItem Struktur_löschen;
 				
 				 public DropDownMenuStruktur(){
 					 Struktureigenschaften = new JMenuItem("Struktureigenschaften");
 					 Element_einfügen = new JMenuItem("Element einfügen");
 					 Struktur_einfügen = new JMenuItem("Struktur einfügen");
+					 Struktur_löschen = new JMenuItem("Struktur löschen");
 
-					 add(Struktureigenschaften); add(Element_einfügen);	 add(Element_einfügen);
-					 Struktureigenschaften.addActionListener(this); Element_einfügen.addActionListener(this);  Struktur_einfügen.addActionListener(this);
+					 add(Struktureigenschaften); add(Element_einfügen);	 add(Element_einfügen); add(Struktur_löschen);
+					 Struktureigenschaften.addActionListener(this); Element_einfügen.addActionListener(this);  Struktur_einfügen.addActionListener(this); Struktur_löschen.addActionListener(this);
 					
 				 }
 
@@ -546,8 +548,13 @@ class JCanvas extends JComponent
 							
 						}
 					}
+					//TODO Struktur_einfügen implementieren
 					if(arg0.getSource() == Struktur_einfügen) {
 						
+					}
+					if(arg0.getSource() == Struktur_löschen) {
+						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+						MainClass.strukturLöschen(MainFrame.posX, MainFrame.posY);
 					}
 				}
 
@@ -608,11 +615,11 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	}
 	
 	public void zeichneObjekte(JCanvas jc) {
-//		for(_2DObject d: jc.zeichnen) {
-//			if(d instanceof Block)System.out.println("b: "+((Block) d).name+" "+((Block) d).color);
-//			if(d instanceof Line)System.out.println("l: "+((Line) d).painted);
-//			if(d instanceof Rahmen)System.out.println("r: "+((Rahmen) d).name+" "+((Rahmen) d).color);
-//		}
+		for(_2DObject d: jc.zeichnen) {
+			if(d instanceof Block)System.out.println("b: "+((Block) d).name+" "+((Block) d).color);
+			if(d instanceof Line)System.out.println("l: "+((Line) d).painted);
+			if(d instanceof Rahmen)System.out.println("r: "+((Rahmen) d).name+" "+((Rahmen) d).color);
+		}
 		frame.getContentPane().add(jc);
 		frame.revalidate();
 		frame.repaint();

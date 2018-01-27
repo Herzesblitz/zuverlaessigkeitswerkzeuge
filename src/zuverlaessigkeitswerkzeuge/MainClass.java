@@ -63,9 +63,8 @@ public class MainClass{
 	    mf.zeichneObjekte(MainFrame.jc);
 	}
 	
-	private void test_blockdiagramm() {	
-	}
 
+	
 	public static void aendereEigenschaften(Element e) {
 		markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10);
 		markedElement.name = e.name;
@@ -80,8 +79,6 @@ public class MainClass{
 		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 		mf.zeichneObjekte(MainFrame.jc);
 	}
-	
-	
 	
 	private void setDimensions(Struktur S, int heigth, int width) {
 		for(int i=0; i<S.s.size(); i++) {
@@ -125,17 +122,16 @@ public class MainClass{
 	
 	//Blockdiagramm veraendern
 		public static void serielleStruktur_einf_kontextlos() {
-			Struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), "neue serielle Struktur", mc.bd.anfang, 100, 100, 500, 1000);
-			Blockdiagramm.anfang.s.add(neu);
+			Struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), "neue serielle Struktur", Blockdiagramm.anfang, 100, 100, 500, 1000);
+			Blockdiagramm.komponenteEinfügen(neu, Blockdiagramm.anfang);
 			mc.zeichenobjekte_eintragen(neu);
-			System.out.println(Blockdiagramm.anfang.s.get(0));
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
 		}
 		
 		public static void paralleleStruktur_einf_kontextlos() {
-			Struktur neu = new Parallel_struktur(new ArrayList<Komponente>(), "neue parallele Struktur",mc.bd.anfang, 100, 100, 1000, 500);
-			Blockdiagramm.anfang.s.add(neu);
+			Struktur neu = new Parallel_struktur(new ArrayList<Komponente>(), "neue parallele Struktur",Blockdiagramm.anfang, 100, 100, 1000, 500);
+			Blockdiagramm.komponenteEinfügen(neu, Blockdiagramm.anfang);
 			mc.zeichenobjekte_eintragen(neu);
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
@@ -168,6 +164,12 @@ public class MainClass{
 		public void K_aus_N_erweitern(String name, double MTTF, double MTTR, int x, int y, K_aus_N_struktur_gleichwertig parent) {
 
 		}
+		
+		public void Struktur_löschen(Struktur e) {
+			if(e.parent != null)e.parent.s.remove(e.parent.s.indexOf(e));
+			
+			e = null;
+		}
 	
 	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
 		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y, Serielle_struktur parent) {
@@ -191,15 +193,12 @@ public class MainClass{
 					neu.block.x = last_x+ last_width+10; neu.block.y = last_y; neu.block.width = 100; neu.block.height = 100;
 					neu.vorg_line = new Line(last_x,last_y +last_heigth/2,last_x + last_width, last_y+ last_heigth/2, Color.black);
 				} 
-				parent.einfuegen(parent.s.size(), neu);	
 			}
 			else {
 				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 100;
 				neu.vorg_line = null;
 			}
-			System.out.println(neu.name);
-			
-			parent.einfuegen(0, neu);	
+			Blockdiagramm.komponenteEinfügen(neu, parent);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -266,7 +265,7 @@ public class MainClass{
 				System.out.println("2 fall");
 				int pos = e.parent.s.indexOf(e);
 				if(pos == 0) {
-					mc.mf.jc.zeichnen.remove(mc.mf.jc.zeichnen.indexOf(((Element) e.parent.s.get(1)).vorg_line));
+					MainFrame.jc.zeichnen.remove(MainFrame.jc.zeichnen.indexOf(((Element) e.parent.s.get(1)).vorg_line));
 					((Element) e.parent.s.get(1)).vorg_line = null;
 				}
 				e.parent.loeschen(pos);
@@ -434,9 +433,32 @@ public class MainClass{
 							}
 						}
 						mf.zeichneObjekte(MainFrame.jc);
-
 					}
 					
+				}
+				
+				//TODO: strukturLöschen test
+				public static void strukturLöschen(int x, int y) {
+					Struktur e = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
+					if(e.s.size() > 0) {
+						for(Komponente k: e.s) {
+							if(k instanceof Element) {
+								mc.zeichenobjekte_austragen(k);
+								System.out.println("lösche: "+k.name);
+								k = null;
+							}
+							else if(k instanceof Struktur) {
+								mc.zeichenobjekte_austragen(k);
+								System.out.println("lösche: "+k.name);
+								strukturLöschen(((Struktur) k).rahmen.x, ((Struktur) k).rahmen.y);
+							}
+						}
+					}
+					else {
+						mc.zeichenobjekte_austragen(e);
+						Blockdiagramm.komponenteLöschen(e);
+					}
+					mc.zeichnen();
 				}
 				
 			
@@ -444,6 +466,8 @@ public class MainClass{
 		//Hilfsfunktionen
 				private void zeichenobjekte_austragen(Komponente S) {
 					if(S instanceof Struktur) {
+					    MainFrame.jc.zeichnen.remove(((Struktur) S).rahmen);	
+					    MainFrame.jc.zeichnen.remove(((Struktur) S).vorg_linie);		
 						for(Komponente k: ((Struktur) S).s){
 							zeichenobjekte_austragen(k);
 						}
@@ -454,7 +478,7 @@ public class MainClass{
 						}
 					    MainFrame.jc.zeichnen.remove(((Element) S).block);		
 					}
-					for(_2DObject a: MainFrame.jc.zeichnen)System.out.println("A eingetragen: "+a.toString());
+					//for(_2DObject a: MainFrame.jc.zeichnen)System.out.println("A eingetragen: "+a.toString());
 					
 				}
 			
