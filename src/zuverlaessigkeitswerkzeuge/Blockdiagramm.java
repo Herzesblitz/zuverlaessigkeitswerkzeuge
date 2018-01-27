@@ -19,29 +19,67 @@ class Komponente{
 class Element extends Komponente{
 	Struktur parent;
 
-	Color black = Color.BLACK;
-	Color blue = Color.blue;
-	Color red = Color.red;
-	Block block = new Block(0, 0, 100, 100,blue);
+	
+	Block block = new Block(0, 0, 150, 150,Color.blue);
 	Line vorg_line;
 	
 	public Element(String name, double MTTF, double MTTR, Struktur parent) {
 		super(name, MTTF, MTTR);
 		block.name = name; block.mttf = MTTF; block.mttr = MTTR;
 		this.parent = parent;
-		zuverlassigkeit(0);
+		berechne_zuverlassigkeit(0);
 		berechne_verfuegbarkeit();
 		berechne_MTBF();
 	}
 	
+	public void setMTTF(double MTTF) {
+		this.MTTF = MTTF;
+		berechne_verfuegbarkeit();
+		berechne_zuverlassigkeit(1);
+		berechne_MTBF();
+		if(parent != null && parent instanceof Struktur) {
+			parent.berechneWerte();
+		}
+		block.mttf = MTTF;
+	}
+	
+	public void setMTTR(double MTTR) {
+		this.MTTR = MTTR;
+		berechne_verfuegbarkeit();
+		berechne_MTBF();
+		if(parent != null && parent instanceof Struktur) {
+			parent.berechneWerte();
+		}
+		block.mttr = MTTR;
+	}
+	
+	public void setVerfuegbarkeit(double verfuegbarkeit) {
+		this.verfuegbarkeit = verfuegbarkeit;
+		if(parent != null && parent instanceof Struktur) {
+			parent.berechneWerte();
+		}
+		block.verfügbarkeit = verfuegbarkeit;
+	}
+	
+	public void setZuverlassigkeit(double zuverlassigkeit) {
+		this.zuverlassigkeit = zuverlassigkeit;
+		if(parent != null && parent instanceof Struktur) {
+			parent.berechneWerte();
+		}
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+		this.block.name = name;
+	}
 
 	
 	public void set_zuverlassigkeit(double r){
 		this.zuverlassigkeit = r;
+		block.zuverlässigkeit = zuverlassigkeit;
 	}
-
 	
-	public void zuverlassigkeit(double t){
+	public void berechne_zuverlassigkeit(double t){
 		this.zuverlassigkeit = ((double) 1/(double)Math.pow(Math.E, MTTF*t));  
 	}
 	
@@ -199,7 +237,6 @@ class Parallel_struktur extends Struktur{
 		}
 		this.MTTR = 1 / this.MTTR;
 		this.rahmen.mttr = MTTR;
-		this.rahmen.mttr = MTTR;
 	}
 	
 }
@@ -231,18 +268,15 @@ class Serielle_struktur extends Struktur{
 	public void berechne_MTTF(){
 		this.MTTF = 0;
 		for(Komponente k: s){
-			System.out.println(k.name);
 			if(k.MTTF==0)System.err.println("MTTF einer komponente ist 0 !");
 			this.MTTF += 1 / k.MTTF;
 		}
 		this.MTTF = 1 / this.MTTF;
-		System.out.println(MTTF);
 		this.rahmen.mttf = MTTF;
 	}
 	
 	public void berechne_MTTR(){
 		this.MTTR = ((1-this.verfuegbarkeit)/this.verfuegbarkeit)*this.MTTF;
-		System.out.println(MTTF);
 		this.rahmen.mttr = MTTR;
 	}
 	
@@ -366,6 +400,7 @@ public class Blockdiagramm {
 				
 	public static void komponenteEinfügen(Komponente e, Struktur parent) {
 		parent.s.add(e);
+		e.parent = parent;
 		if(e instanceof Parallel_struktur) {
 			((Parallel_struktur) e).berechneWerte();	
 		}
@@ -375,7 +410,6 @@ public class Blockdiagramm {
 		if(e instanceof K_aus_N_struktur_gleichwertig) {
 			((K_aus_N_struktur_gleichwertig) e).berechneWerte();
 		}
-		e.parent = parent;
 	}
 	
 	public static void komponenteLöschen(Komponente e) {

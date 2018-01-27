@@ -51,6 +51,12 @@ class Block extends _2DObject{
 	   String name="-";
 	   double mttf= 0;
 	   double mttr= 0;
+	   double verfügbarkeit=0;
+	   double zuverlässigkeit = 0;
+	   
+	   public void werteUebernehmen(Block a) {
+		   x = a.x; y = a.y; height = a.height; width = a.width; color = a.color;
+	   }
 
 	   Block(int x, int y, int height, int width, Color color){
 		   this.x = x; this.y = y; this.height = height; this.width = width;
@@ -69,6 +75,8 @@ class Line extends _2DObject{
 	boolean painted;
 }
 
+
+//KLassen für DropDownMenu Element
 class JCanvas extends JComponent
 {
    /**
@@ -90,13 +98,18 @@ class JCanvas extends JComponent
 		    g2.setColor(Color.LIGHT_GRAY);
 		    g2.fillRect(((Block) a).x+5,((Block) a).y+5,((Block) a).width-5,((Block) a).height-5);
 		    g2.setColor(Color.black);
-		    g2.drawString(((Block) a).name, ((Block) a).x+((Block) a).width/2 , ((Block) a).y +((Block) a).height/2);
+		    g2.drawString(((Block) a).name, ((Block) a).x+20 , ((Block) a).y +20);
 		    String mttf = String.valueOf(((Block) a).mttf); 
 		    String mttr = String.valueOf(((Block) a).mttr); 
+		    String verfügbarkeit = String.valueOf(((Block) a).verfügbarkeit);
+		    String zuverlässigkeit = String.valueOf(((Block) a).zuverlässigkeit);
+		    
 		    g2.setColor(Color.black);
-		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.3) , (int) ( ((Block) a).y +((Block) a).height*0.65));
-		    g2.setColor(Color.black);
-		    g2.drawString("MTTR: "+mttr, (int) (((Block) a).x+((Block) a).width*0.3), (int) (((Block) a).y +((Block) a).height*0.8));
+		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.2) , (int) ( ((Block) a).y +((Block) a).height*0.65));
+		    g2.drawString("MTTR: "+mttr, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.75));
+		    g2.drawString("Verfügbarkeit: "+verfügbarkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.85));
+		    g2.drawString("Zuverlässigkeit: "+zuverlässigkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.95));
+
 		    continue;
 		  }
 		  if(a instanceof Line) {  
@@ -130,8 +143,6 @@ class JCanvas extends JComponent
    
  }
 
-//KLassen für DropDownMenu Element
-			 
 			
 			class Aussehenfenster_element extends JFrame{
 				/**
@@ -224,10 +235,12 @@ class JCanvas extends JComponent
 				Element el = new Element("", 0, 0, null);
 				JTextField editTextArea_name = new JTextField();
 				JTextField editTextArea_mttf = new JTextField();
+				JTextField editTextArea_verfügbarkeit = new JTextField();
+				JTextField editTextArea_zuverlässigkeit = new JTextField();
 				JTextField editTextArea_mttr = new JTextField();
 			
 				 //Kontextfenster Element
-					String name; double mttr; double mttf;
+					String name; double mttr; double mttf; double verfügbarkeit; double zuverlässigkeit;
 				
 				public Eigenschaftenfenster_element() {
 					el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
@@ -263,14 +276,27 @@ class JCanvas extends JComponent
 					editTextArea_mttr= new JTextField(String.valueOf(el.MTTR));
 					editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-					cp.add(editTextArea_mttr);			
+					cp.add(editTextArea_mttr);	
+					
+					editTextArea_verfügbarkeit= new JTextField(String.valueOf(el.verfuegbarkeit));
+					editTextArea_verfügbarkeit.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_verfügbarkeit);
+					
+					editTextArea_zuverlässigkeit= new JTextField(String.valueOf(el.zuverlassigkeit));
+					editTextArea_zuverlässigkeit.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_zuverlässigkeit);
 					this.setVisible(true);
+					
+					
 					
 					editTextArea_name.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							el.name = editTextArea_name.getText();
 							MainClass.aendereEigenschaften(el);
+							 //TODO: funzt?? sonst: el.setName(name);
 						}
 					});
 					editTextArea_mttf.addActionListener(new ActionListener() {
@@ -287,7 +313,21 @@ class JCanvas extends JComponent
 							MainClass.aendereEigenschaften(el);
 						}
 					});
-					
+					editTextArea_verfügbarkeit.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							el.verfuegbarkeit = Double.valueOf(editTextArea_verfügbarkeit.getText());
+							MainClass.aendereEigenschaften(el);
+						}
+					});
+					editTextArea_zuverlässigkeit.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							System.out.println(Double.valueOf(editTextArea_zuverlässigkeit.getText()));
+							el.zuverlassigkeit = Double.valueOf(editTextArea_zuverlässigkeit.getText());
+							MainClass.aendereEigenschaften(el);
+						}
+					});
 				}	
 			}
 			
@@ -380,9 +420,7 @@ class JCanvas extends JComponent
 			    	Element_hinzufuegen.addActionListener(this);
 			    	par_Struktur_hinzufuegen.addActionListener(this);
 			    	ser_Struktur_hinzufuegen.addActionListener(this);
-			     }
-			    
-			    
+			     }    
 			    
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -615,11 +653,11 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	}
 	
 	public void zeichneObjekte(JCanvas jc) {
-		for(_2DObject d: jc.zeichnen) {
-			if(d instanceof Block)System.out.println("b: "+((Block) d).name+" "+((Block) d).color);
-			if(d instanceof Line)System.out.println("l: "+((Line) d).painted);
-			if(d instanceof Rahmen)System.out.println("r: "+((Rahmen) d).name+" "+((Rahmen) d).color);
-		}
+//		for(_2DObject d: jc.zeichnen) {
+//			if(d instanceof Block)System.out.println("b: "+((Block) d).name+" "+((Block) d).color);
+//			if(d instanceof Line)System.out.println("l: "+((Line) d).painted);
+//			if(d instanceof Rahmen)System.out.println("r: "+((Rahmen) d).name+" "+((Rahmen) d).color);
+//		}
 		frame.getContentPane().add(jc);
 		frame.revalidate();
 		frame.repaint();

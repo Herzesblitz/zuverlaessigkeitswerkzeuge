@@ -66,16 +66,15 @@ public class MainClass{
 
 	
 	public static void aendereEigenschaften(Element e) {
+		
 		markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10);
-		markedElement.name = e.name;
-		markedElement.block.name = e.name;
-		markedElement.MTTF = e.MTTF;
-		markedElement.block.mttf = e.MTTF;
-		markedElement.MTTR = e.MTTR;
-		markedElement.block.mttr = e.MTTR;
-		markedElement.block.height = e.block.height;
-		markedElement.block.width = e.block.width;
-		markedElement.block.color = e.block.color;
+		markedElement.setName(e.name);
+		markedElement.setMTTF(e.MTTF);
+		markedElement.setMTTR(e.MTTR);
+		markedElement.set_zuverlassigkeit(e.zuverlassigkeit);
+		markedElement.setVerfuegbarkeit(e.verfuegbarkeit);
+		markedElement.block.werteUebernehmen(e.block);
+
 		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 		mf.zeichneObjekte(MainFrame.jc);
 	}
@@ -120,7 +119,13 @@ public class MainClass{
 		}
 	}
 	
-	//Blockdiagramm veraendern
+	//Strukturen veraendern
+	
+		//TODO: K_aus_N_erweitern implementieren
+		public void K_aus_N_erweitern(String name, double MTTF, double MTTR, int x, int y, K_aus_N_struktur_gleichwertig parent) {
+
+		}
+		
 		public static void serielleStruktur_einf_kontextlos() {
 			Struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), "neue serielle Struktur", Blockdiagramm.anfang, 100, 100, 500, 1000);
 			Blockdiagramm.komponenteEinfügen(neu, Blockdiagramm.anfang);
@@ -160,16 +165,7 @@ public class MainClass{
 //			e.parent.s.add(new Parallel_struktur(k, name, e.parent)); 
 //		}
 		
-		//TODO: K_aus_N_erweitern implementieren
-		public void K_aus_N_erweitern(String name, double MTTF, double MTTR, int x, int y, K_aus_N_struktur_gleichwertig parent) {
-
-		}
 		
-		public void Struktur_löschen(Struktur e) {
-			if(e.parent != null)e.parent.s.remove(e.parent.s.indexOf(e));
-			
-			e = null;
-		}
 	
 	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
 		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y, Serielle_struktur parent) {
@@ -379,7 +375,7 @@ public class MainClass{
 				//TODO: automatische verkleinerung?	
 				public static void elementMarkieren(Element e) {
 					if(markedElement != null) {			
-						markedElement.block.color = markedElement.blue;
+						markedElement.block.color = Color.BLUE;
 						if(markedElement.equals(e)) {
 							markedElement = null;
 							mf.zeichneObjekte(MainFrame.jc);
@@ -391,7 +387,7 @@ public class MainClass{
 		            markedElement =e;
 					if(markedElement==null)return;
 					else {	
-						markedElement.block.color = markedElement.red;
+						markedElement.block.color = Color.RED;
 						mf.zeichneObjekte(MainFrame.jc);
 					}
 					//System.out.println("markiertes Element: "+markedElement.name);
