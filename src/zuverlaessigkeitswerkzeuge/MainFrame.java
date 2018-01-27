@@ -37,8 +37,8 @@ class Rahmen extends _2DObject{
 	   Color color;
 	   double mttf= 0;
 	   double mttr= 0;
-	   double verfuegbarkeit;
-	   double zuverlaessigkeit;
+	   double verfügbarkeit;
+	   double zuverlässigkeit;
 	   
 	   public Rahmen(String name, int x, int y, int height, int width) {
 		   this.name = name; this.x = x; this.y = y; this.height = height; this.width = width; 
@@ -132,11 +132,11 @@ class JCanvas extends JComponent
 			  String verfügbarkeit = String.valueOf(((Rahmen) a).verfügbarkeit);
 			  String zuverlässigkeit = String.valueOf(((Rahmen) a).zuverlässigkeit);
 			    g2.setColor(Color.black);
-			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9) , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -30);
+			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9) , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -40);
 			    g2.setColor(Color.black);
-			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height) - 20);
-			  g2.drawString("verfügbarkeit: "+verfügbarkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.2), (int) (((Rahmen) a).y +((Rahmen) a).height*0.85));
-			  g2.drawString("zuverlässigkeit: "+zuverlässigkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.2), (int) (((Rahmen) a).y +((Rahmen) a).height*0.95));
+			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height) - 30);
+			  g2.drawString("verfügbarkeit: "+verfügbarkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height)-20);
+			  g2.drawString("zuverlässigkeit: "+zuverlässigkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height)-10);
 		  }
 		  
 	  }
@@ -599,7 +599,6 @@ class JCanvas extends JComponent
 						
 					}
 					if(arg0.getSource() == Struktur_Löschen) {
-						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 						MainClass.strukturLöschen(MainFrame.posX, MainFrame.posY);
 					}
 				}

@@ -249,6 +249,19 @@ public class MainClass{
 				System.err.println("Mauszeiger ist auf keinem Element!");
 				return;
 			}
+			System.out.println("struktur_verkleinern: "+e.name);
+			if(e.parent instanceof Struktur) {
+				System.out.println(e.parent.name);
+				if(e.parent == Blockdiagramm.anfang) {
+					System.out.println("lösche element: "+e.name);
+					elementLöschen(x, y);
+					mc.zeichenobjekte_austragen(e);
+					mf.zeichneObjekte(MainFrame.jc);
+					return;
+				}
+			}
+				
+			
 			//System.out.println("l�sche: "+e.name);
 
 			mc.zeichenobjekte_austragen(e);
@@ -264,7 +277,8 @@ public class MainClass{
 					MainFrame.jc.zeichnen.remove(MainFrame.jc.zeichnen.indexOf(((Element) e.parent.s.get(1)).vorg_line));
 					((Element) e.parent.s.get(1)).vorg_line = null;
 				}
-				e.parent.loeschen(pos);
+						//e.parent.loeschen(pos); //TODO: Funzt? löschen!
+						elementLöschen(x, y);
 				return;
 			}
 			//fix um bei 3+ Elementen linien richtig zu ziehen
@@ -272,7 +286,8 @@ public class MainClass{
 				int pos = e.parent.s.indexOf(e);
 				nachfolger = (Element) e.parent.s.get(pos+1);
 				if(pos == 0)MainFrame.jc.zeichnen.remove(MainFrame.jc.zeichnen.indexOf(((Element)e.parent.s.get(1)).vorg_line));
-				e.parent.loeschen(pos);
+				//e.parent.loeschen(pos); //TODO: Funzt? löschen!
+				elementLöschen(x, y);
 				//fix mittleres Element loeschens
 					if(nachfolger.parent.s.size() > 1 ) {
 						Element vorgaenger = ((Element) nachfolger.parent.s.get(nachfolger.parent.s.indexOf(nachfolger)-1));
@@ -435,29 +450,36 @@ public class MainClass{
 				
 				//TODO: strukturLöschen test
 				public static void strukturLöschen(int x, int y) {
+					markedStruktur = null;
 					Struktur e = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
 					if(e.s.size() > 0) {
 						for(Komponente k: e.s) {
 							if(k instanceof Element) {
 								mc.zeichenobjekte_austragen(k);
-								System.out.println("l�sche: "+k.name);
+								System.out.println("lösche: "+k.name);
 								k = null;
 							}
 							else if(k instanceof Struktur) {
 								mc.zeichenobjekte_austragen(k);
-								System.out.println("l�sche: "+k.name);
+								System.out.println("lösche: "+k.name);
 								strukturLöschen(((Struktur) k).rahmen.x, ((Struktur) k).rahmen.y);
 							}
 						}
 					}
 					else {
 						mc.zeichenobjekte_austragen(e);
-						Blockdiagramm.komponenteLöschen(e);
+						Blockdiagramm.komponenteLöschen(e,Blockdiagramm.anfang);
 					}
 					mc.zeichnen();
 				}
 				
-			
+				public static void elementLöschen(int x, int y) {
+					markedElement = null;
+					Element e = Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
+					System.out.println("funktion elementLöschen: "+e.name);
+					Blockdiagramm.komponenteLöschen(e,Blockdiagramm.anfang);
+					mc.zeichnen();
+				}
 	
 		//Hilfsfunktionen
 				private void zeichenobjekte_austragen(Komponente S) {

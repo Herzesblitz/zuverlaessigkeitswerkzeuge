@@ -27,7 +27,7 @@ class Element extends Komponente{
 		super(name, MTTF, MTTR);
 		block.name = name; block.mttf = MTTF; block.mttr = MTTR;
 		this.parent = parent;
-		berechne_zuverlassigkeit(0);
+		berechne_zuverlassigkeit(1);
 		berechne_verfuegbarkeit();
 		berechne_MTBF();
 	}
@@ -81,6 +81,12 @@ class Element extends Komponente{
 	
 	public void berechne_zuverlassigkeit(double t){
 		this.zuverlassigkeit = ((double) 1/(double)Math.pow(Math.E, MTTF*t));  
+		System.out.println(this.zuverlassigkeit);
+		block.zuverlässigkeit = zuverlassigkeit;
+		if(parent instanceof Serielle_struktur) ((Serielle_struktur) parent).berechne_zuverlassigkeit(1);
+		if(parent instanceof Parallel_struktur) ((Parallel_struktur) parent).berechne_zuverlassigkeit();
+		if(parent instanceof K_aus_N_struktur_gleichwertig) ((K_aus_N_struktur_gleichwertig) parent).berechne_zuverlassigkeit();
+		
 	}
 	
 	public void berechne_verfuegbarkeit(){
@@ -211,7 +217,7 @@ class Parallel_struktur extends Struktur{
 		}
 		System.out.println(this.zuverlassigkeit);
 		this.zuverlassigkeit = 1-this.zuverlassigkeit;
-		this.rahmen.zuverlaessigkeit = zuverlassigkeit;
+		this.rahmen.zuverlässigkeit = zuverlassigkeit;
 	}
 	
 	public void berechne_verfuegbarkeit(){
@@ -222,7 +228,7 @@ class Parallel_struktur extends Struktur{
 			this.verfuegbarkeit *= (1 - k.verfuegbarkeit);
 		}
 		this.verfuegbarkeit = 1-this.verfuegbarkeit;
-		this.rahmen.zuverlaessigkeit = this.zuverlassigkeit;
+		this.rahmen.zuverlässigkeit = this.zuverlassigkeit;
 	}
 	
 	public void berechne_MTTF(){
@@ -263,7 +269,7 @@ class Serielle_struktur extends Struktur{
 			if(k.zuverlassigkeit==0)System.err.println(this.name+" "+"zuverlassigkeit einer komponente ist 0 !");
 			zuverlassigkeit*=k.zuverlassigkeit;
 		}
-		this.rahmen.zuverlaessigkeit = zuverlassigkeit;
+		this.rahmen.zuverlässigkeit = zuverlassigkeit;
 	}
 	
 	public void berechne_MTTF(){
@@ -287,7 +293,7 @@ class Serielle_struktur extends Struktur{
 			if(k.verfuegbarkeit==0)System.err.println("verfuegbarkeit einer komponente ist 0 !");
 			this.verfuegbarkeit *= k.verfuegbarkeit;
 		}
-		this.rahmen.verfuegbarkeit = verfuegbarkeit;
+		this.rahmen.verfügbarkeit = verfuegbarkeit;
 	}
 }
 
@@ -350,6 +356,7 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 		double uber_factor = n_uber_k(s.size(), k);
 		double zuv= Math.pow(el_zuv,n)+uber_factor*Math.pow(el_zuv,k)*Math.pow(1-el_zuv,n-k);
 		this.zuverlassigkeit = zuv;
+		rahmen.zuverlässigkeit = zuverlassigkeit;
 	}
 }
 
@@ -413,8 +420,17 @@ public class Blockdiagramm {
 		}
 	}
 	
-	public static void komponenteLöschen(Komponente e) {
-		e.parent.s.remove(e.parent.s.indexOf(e));
+	public static void komponenteLöschen(Komponente k, Struktur parent) {
+		//Element e = sucheElement(anfang, x, y);
+//		if(e != null) {
+//			System.out.println("funktion: komponenteLöschen "+e.name+" "+e.parent.name);
+//			e.parent.s.remove(e.parent.s.indexOf(e));
+//		}
+//		else {
+//			// Struktur k = sucheStruktur(anfang, x, y);
+//		     k.parent.s.remove(k.parent.s.indexOf(k));
+//		}
+		parent.s.remove(parent.s.indexOf(k));
 	}
 	
 	
