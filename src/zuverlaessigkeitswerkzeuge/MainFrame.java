@@ -51,8 +51,8 @@ class Block extends _2DObject{
 	   String name="-";
 	   double mttf= 0;
 	   double mttr= 0;
-	   double verfügbarkeit=0;
-	   double zuverlässigkeit = 0;
+	   double verfÃ¼gbarkeit=0;
+	   double zuverlÃ¤ssigkeit = 0;
 	   
 	   public void werteUebernehmen(Block a) {
 		   x = a.x; y = a.y; height = a.height; width = a.width; color = a.color;
@@ -76,7 +76,7 @@ class Line extends _2DObject{
 }
 
 
-//KLassen für DropDownMenu Element
+//KLassen fï¿½r DropDownMenu Element
 class JCanvas extends JComponent
 {
    /**
@@ -101,14 +101,14 @@ class JCanvas extends JComponent
 		    g2.drawString(((Block) a).name, ((Block) a).x+20 , ((Block) a).y +20);
 		    String mttf = String.valueOf(((Block) a).mttf); 
 		    String mttr = String.valueOf(((Block) a).mttr); 
-		    String verfügbarkeit = String.valueOf(((Block) a).verfügbarkeit);
-		    String zuverlässigkeit = String.valueOf(((Block) a).zuverlässigkeit);
+		    String verfÃ¼gbarkeit = String.valueOf(((Block) a).verfÃ¼gbarkeit);
+		    String zuverlÃ¤ssigkeit = String.valueOf(((Block) a).zuverlÃ¤ssigkeit);
 		    
 		    g2.setColor(Color.black);
 		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.2) , (int) ( ((Block) a).y +((Block) a).height*0.65));
 		    g2.drawString("MTTR: "+mttr, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.75));
-		    g2.drawString("Verfügbarkeit: "+verfügbarkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.85));
-		    g2.drawString("Zuverlässigkeit: "+zuverlässigkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.95));
+		    g2.drawString("verfÃ¼gbarkeit: "+verfÃ¼gbarkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.85));
+		    g2.drawString("zuverlÃ¤ssigkeit: "+zuverlÃ¤ssigkeit, (int) (((Block) a).x+((Block) a).width*0.2), (int) (((Block) a).y +((Block) a).height*0.95));
 
 		    continue;
 		  }
@@ -128,11 +128,15 @@ class JCanvas extends JComponent
 			    g2.drawString(((Rahmen) a).name, ((Rahmen) a).x+((Rahmen) a).width/2 , ((Rahmen) a).y +10);
 			    
 			    String mttf = String.valueOf(((Rahmen) a).mttf); 
-			    String mttr = String.valueOf(((Rahmen) a).mttr); 
+			    String mttr = String.valueOf(((Rahmen) a).mttr);
+			  String verfÃ¼gbarkeit = String.valueOf(((Rahmen) a).verfÃ¼gbarkeit);
+			  String zuverlÃ¤ssigkeit = String.valueOf(((Rahmen) a).zuverlÃ¤ssigkeit);
 			    g2.setColor(Color.black);
 			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9) , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -30);
 			    g2.setColor(Color.black);
 			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height) - 20);
+			  g2.drawString("verfÃ¼gbarkeit: "+verfÃ¼gbarkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.2), (int) (((Rahmen) a).y +((Rahmen) a).height*0.85));
+			  g2.drawString("zuverlÃ¤ssigkeit: "+zuverlÃ¤ssigkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.2), (int) (((Rahmen) a).y +((Rahmen) a).height*0.95));
 		  }
 		  
 	  }
@@ -168,7 +172,7 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Aussehen verändern: Höhe, Breite, Farbe");
+					JLabel label=new JLabel("Aussehen verï¿½ndern: Hï¿½he, Breite, Farbe");
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -213,9 +217,9 @@ class JCanvas extends JComponent
 								switch(farbe.toLowerCase()) {
 									case "rot": el.block.color = Color.RED;
 									case "blau": el.block.color = Color.BLUE;
-									case "grün": el.block.color = Color.GREEN;
+									case "grï¿½n": el.block.color = Color.GREEN;
 									case "schwarz": el.block.color = Color.BLACK;
-									case "weiß": el.block.color = Color.WHITE;
+									case "weiï¿½": el.block.color = Color.WHITE;
 									case "orange": el.block.color = Color.ORANGE;
 									case "gelb": el.block.color = Color.yellow;
 									case "grau": el.block.color = Color.GRAY;	
@@ -235,12 +239,12 @@ class JCanvas extends JComponent
 				Element el = new Element("", 0, 0, null);
 				JTextField editTextArea_name = new JTextField();
 				JTextField editTextArea_mttf = new JTextField();
-				JTextField editTextArea_verfügbarkeit = new JTextField();
-				JTextField editTextArea_zuverlässigkeit = new JTextField();
+				//JTextField editTextArea_verfÃ¼gbarkeit = new JTextField();
+				//JTextField editTextArea_zuverlÃ¤ssigkeit = new JTextField();
 				JTextField editTextArea_mttr = new JTextField();
 			
 				 //Kontextfenster Element
-					String name; double mttr; double mttf; double verfügbarkeit; double zuverlässigkeit;
+					String name; double mttr; double mttf; double verfÃ¼gbarkeit; double zuverlÃ¤ssigkeit;
 				
 				public Eigenschaftenfenster_element() {
 					el = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
@@ -256,7 +260,7 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
+					JLabel label=new JLabel("Eigenschaften verï¿½ndern: Name, MTTF, MTTR");
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -277,16 +281,18 @@ class JCanvas extends JComponent
 					editTextArea_mttr.setHorizontalAlignment(SwingConstants.LEFT);
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
 					cp.add(editTextArea_mttr);	
+
+					/*
+					editTextArea_verfÃ¼gbarkeit= new JTextField(String.valueOf(el.verfuegbarkeit));
+					editTextArea_verfÃ¼gbarkeit.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_verfÃ¼gbarkeit.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_verfÃ¼gbarkeit);
 					
-					editTextArea_verfügbarkeit= new JTextField(String.valueOf(el.verfuegbarkeit));
-					editTextArea_verfügbarkeit.setHorizontalAlignment(SwingConstants.LEFT);
-					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-					cp.add(editTextArea_verfügbarkeit);
-					
-					editTextArea_zuverlässigkeit= new JTextField(String.valueOf(el.zuverlassigkeit));
-					editTextArea_zuverlässigkeit.setHorizontalAlignment(SwingConstants.LEFT);
-					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
-					cp.add(editTextArea_zuverlässigkeit);
+					editTextArea_zuverlÃ¤ssigkeit= new JTextField(String.valueOf(el.zuverlassigkeit));
+					editTextArea_zuverlÃ¤ssigkeit.setHorizontalAlignment(SwingConstants.LEFT);
+					//editTextArea_zuverlÃ¤ssigkeit.setMaximumSize(new Dimension(200, 40));
+					cp.add(editTextArea_zuverlÃ¤ssigkeit);
+					*/
 					this.setVisible(true);
 					
 					
@@ -313,28 +319,30 @@ class JCanvas extends JComponent
 							MainClass.aendereEigenschaften(el);
 						}
 					});
-					editTextArea_verfügbarkeit.addActionListener(new ActionListener() {
+					/*
+					editTextArea_verfÃ¼gbarkeit.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							el.verfuegbarkeit = Double.valueOf(editTextArea_verfügbarkeit.getText());
+							el.verfuegbarkeit = Double.valueOf(editTextArea_verfÃ¼gbarkeit.getText());
 							MainClass.aendereEigenschaften(el);
 						}
 					});
-					editTextArea_zuverlässigkeit.addActionListener(new ActionListener() {
+					editTextArea_zuverlÃ¤ssigkeit.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							System.out.println(Double.valueOf(editTextArea_zuverlässigkeit.getText()));
-							el.zuverlassigkeit = Double.valueOf(editTextArea_zuverlässigkeit.getText());
+							System.out.println(Double.valueOf(editTextArea_zuverlÃ¤ssigkeit.getText()));
+							el.zuverlassigkeit = Double.valueOf(editTextArea_zuverlÃ¤ssigkeit.getText());
 							MainClass.aendereEigenschaften(el);
 						}
 					});
+					*/
 				}	
 			}
 			
 			
 			
 			/**
-			 * Klasse die DropDownMenu das bei Rechtsklick auf ein Element entsteht darstellt und deren FUnktionalität implementiert.
+			 * Klasse die DropDownMenu das bei Rechtsklick auf ein Element entsteht darstellt und deren FUnktionalitï¿½t implementiert.
 			 * @author Johannes
 			 */
 			class DropDownMenuElement extends JPopupMenu implements ActionListener {
@@ -359,7 +367,7 @@ class JCanvas extends JComponent
 			    	Aussehen = new JMenuItem("Aussehen");
 			    	Element_hinzufuegen_dahinter = new JMenuItem("Element dahinter hinzufuegen");
 			    	Struktur_hinzufuegen = new JMenuItem("Struktur hinzufuegen");
-			    	Element_loeschen = new JMenuItem("Element löschen");
+			    	Element_loeschen = new JMenuItem("Element LÃ¶schen");
 			    	
 			        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen); add(Element_hinzufuegen_dahinter); add(Element_loeschen);
 			        //Buttons zum Actionlistener hinzufuegen
@@ -394,9 +402,9 @@ class JCanvas extends JComponent
 				}    
 			}
 
-//KLassen für DropDownMenu 
+//KLassen fï¿½r DropDownMenu 
 			/**
-			 * Klasse die DropDownMenu das bei Rechtsklick auf leeren Raum entsteht, darstellt und deren FUnktionalität implementiert.
+			 * Klasse die DropDownMenu das bei Rechtsklick auf leeren Raum entsteht, darstellt und deren FUnktionalitï¿½t implementiert.
 			 * @author Johannes
 			 *
 			 */
@@ -412,9 +420,9 @@ class JCanvas extends JComponent
 
 			    
 			    public DropDownMenuVoid(){
-			    	Element_hinzufuegen = new JMenuItem("Element hinzufügen");
-			    	par_Struktur_hinzufuegen = new JMenuItem("parallele Struktur hinzufügen");
-			    	ser_Struktur_hinzufuegen = new JMenuItem("serielle Struktur hinzufügen");
+			    	Element_hinzufuegen = new JMenuItem("Element hinzufï¿½gen");
+			    	par_Struktur_hinzufuegen = new JMenuItem("parallele Struktur hinzufï¿½gen");
+			    	ser_Struktur_hinzufuegen = new JMenuItem("serielle Struktur hinzufï¿½gen");
 			    	
 			    	add(Element_hinzufuegen); add(ser_Struktur_hinzufuegen); add(par_Struktur_hinzufuegen);
 			    	Element_hinzufuegen.addActionListener(this);
@@ -436,7 +444,7 @@ class JCanvas extends JComponent
 				}
 			}
 			
-//KLassen für DropDownMenuStruktur
+//KLassen fï¿½r DropDownMenuStruktur
 			class Eigenschaftenfenster_struktur extends JFrame{
 				/**
 				 * 
@@ -469,7 +477,7 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
+					JLabel label=new JLabel("Eigenschaften verï¿½ndern: Name, MTTF, MTTR");
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -544,7 +552,7 @@ class JCanvas extends JComponent
 			}
 			
 			/**
-			 * Klasse die DropDownMenuStruktur das bei Rechtsklick auf Stuktur entsteht, darstellt und deren FUnktionalität implementiert.
+			 * Klasse die DropDownMenuStruktur das bei Rechtsklick auf Stuktur entsteht, darstellt und deren FUnktionalitï¿½t implementiert.
 			 * @author Johannes
 			 *
 			 */
@@ -555,19 +563,19 @@ class JCanvas extends JComponent
 				private static final long serialVersionUID = 1L;
 				Struktur zeiger;
 				JMenuItem Struktureigenschaften;
-				JMenuItem Element_einfügen;
-				JMenuItem Struktur_einfügen;
+				JMenuItem Element_EinfÃ¼gen;
+				JMenuItem Struktur_EinfÃ¼gen;
 				Eigenschaftenfenster_struktur eig_fenster;
-				JMenuItem Struktur_löschen;
+				JMenuItem Struktur_LÃ¶schen;
 				
 				 public DropDownMenuStruktur(){
 					 Struktureigenschaften = new JMenuItem("Struktureigenschaften");
-					 Element_einfügen = new JMenuItem("Element einfügen");
-					 Struktur_einfügen = new JMenuItem("Struktur einfügen");
-					 Struktur_löschen = new JMenuItem("Struktur löschen");
+					 Element_EinfÃ¼gen = new JMenuItem("Element EinfÃ¼gen");
+					 Struktur_EinfÃ¼gen = new JMenuItem("Struktur EinfÃ¼gen");
+					 Struktur_LÃ¶schen = new JMenuItem("Struktur LÃ¶schen");
 
-					 add(Struktureigenschaften); add(Element_einfügen);	 add(Element_einfügen); add(Struktur_löschen);
-					 Struktureigenschaften.addActionListener(this); Element_einfügen.addActionListener(this);  Struktur_einfügen.addActionListener(this); Struktur_löschen.addActionListener(this);
+					 add(Struktureigenschaften); add(Element_EinfÃ¼gen);	 add(Element_EinfÃ¼gen); add(Struktur_LÃ¶schen);
+					 Struktureigenschaften.addActionListener(this); Element_EinfÃ¼gen.addActionListener(this);  Struktur_EinfÃ¼gen.addActionListener(this); Struktur_LÃ¶schen.addActionListener(this);
 					
 				 }
 
@@ -577,7 +585,7 @@ class JCanvas extends JComponent
 						eig_fenster = new Eigenschaftenfenster_struktur();
 						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 					}
-					if(arg0.getSource() == Element_einfügen) {
+					if(arg0.getSource() == Element_EinfÃ¼gen) {
 						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 						if(zeiger instanceof Serielle_struktur) {
 							MainClass.serielleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Serielle_struktur) zeiger);
@@ -586,13 +594,13 @@ class JCanvas extends JComponent
 							
 						}
 					}
-					//TODO Struktur_einfügen implementieren
-					if(arg0.getSource() == Struktur_einfügen) {
+					//TODO Struktur_EinfÃ¼gen implementieren
+					if(arg0.getSource() == Struktur_EinfÃ¼gen) {
 						
 					}
-					if(arg0.getSource() == Struktur_löschen) {
+					if(arg0.getSource() == Struktur_LÃ¶schen) {
 						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
-						MainClass.strukturLöschen(MainFrame.posX, MainFrame.posY);
+						MainClass.strukturLÃ¶schen(MainFrame.posX, MainFrame.posY);
 					}
 				}
 
@@ -630,7 +638,7 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
 			//System.out.println(aufloesung.width+" "+aufloesung.height);
-			frame.setTitle("Zuverlässigkeitswerkzeuge");
+			frame.setTitle("zuverlÃ¤ssigkeitswerkzeuge");
 			frame.setResizable(true);
 			frame.setLocation(0, 0);
 			frame.setVisible(true);	 frame.pack();	
@@ -709,14 +717,14 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 			if(!(sucheElement == null)) {
 				if(!(vergleich == null)) {
 					if(vergleich == sucheElement) {					
-//TODO: funzt? dann entsprechende fkt in mc löschen!						//MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
+//TODO: funzt? dann entsprechende fkt in mc LÃ¶schen!						//MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
 						MainClass.markedElement =  Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, arg0.getX(), arg0.getY());
 						pop_ddme(arg0);
 					}
 				}
 			}
 			else if(sucheStruktur != null && !sucheStruktur.equals(MainClass.mc.bd.anfang)) {
-				System.out.println("Struktur ausgewählt: "+sucheStruktur.name);
+				System.out.println("Struktur ausgewï¿½hlt: "+sucheStruktur.name);
 				if(MainClass.markedStruktur != null) {
 					pop_ddms(arg0);
 				}

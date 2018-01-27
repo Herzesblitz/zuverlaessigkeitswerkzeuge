@@ -128,7 +128,7 @@ public class MainClass{
 		
 		public static void serielleStruktur_einf_kontextlos() {
 			Struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), "neue serielle Struktur", Blockdiagramm.anfang, 100, 100, 500, 1000);
-			Blockdiagramm.komponenteEinfügen(neu, Blockdiagramm.anfang);
+			Blockdiagramm.komponenteEinfÃ¼gen(neu, Blockdiagramm.anfang);
 			mc.zeichenobjekte_eintragen(neu);
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
@@ -136,7 +136,7 @@ public class MainClass{
 		
 		public static void paralleleStruktur_einf_kontextlos() {
 			Struktur neu = new Parallel_struktur(new ArrayList<Komponente>(), "neue parallele Struktur",Blockdiagramm.anfang, 100, 100, 1000, 500);
-			Blockdiagramm.komponenteEinfügen(neu, Blockdiagramm.anfang);
+			Blockdiagramm.komponenteEinfÃ¼gen(neu, Blockdiagramm.anfang);
 			mc.zeichenobjekte_eintragen(neu);
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
@@ -194,7 +194,7 @@ public class MainClass{
 				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 100;
 				neu.vorg_line = null;
 			}
-			Blockdiagramm.komponenteEinfügen(neu, parent);
+			Blockdiagramm.komponenteEinfÃ¼gen(neu, parent);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -249,14 +249,14 @@ public class MainClass{
 				System.err.println("Mauszeiger ist auf keinem Element!");
 				return;
 			}
-			//System.out.println("lösche: "+e.name);
+			//System.out.println("lï¿½sche: "+e.name);
 
 			mc.zeichenobjekte_austragen(e);
 			mf.zeichneObjekte(MainFrame.jc);
 			
 			Element nachfolger = null;
 			
-			//fix um bei 2 Elementen die Linie vom 2. Element zu löschen
+			//fix um bei 2 Elementen die Linie vom 2. Element zu LÃ¶schen
 			if(e.parent.s.size() ==2) {
 				System.out.println("2 fall");
 				int pos = e.parent.s.indexOf(e);
@@ -433,26 +433,26 @@ public class MainClass{
 					
 				}
 				
-				//TODO: strukturLöschen test
-				public static void strukturLöschen(int x, int y) {
+				//TODO: strukturLÃ¶schen test
+				public static void strukturLÃ¶schen(int x, int y) {
 					Struktur e = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
 					if(e.s.size() > 0) {
 						for(Komponente k: e.s) {
 							if(k instanceof Element) {
 								mc.zeichenobjekte_austragen(k);
-								System.out.println("lösche: "+k.name);
+								System.out.println("lï¿½sche: "+k.name);
 								k = null;
 							}
 							else if(k instanceof Struktur) {
 								mc.zeichenobjekte_austragen(k);
-								System.out.println("lösche: "+k.name);
-								strukturLöschen(((Struktur) k).rahmen.x, ((Struktur) k).rahmen.y);
+								System.out.println("lï¿½sche: "+k.name);
+								strukturLÃ¶schen(((Struktur) k).rahmen.x, ((Struktur) k).rahmen.y);
 							}
 						}
 					}
 					else {
 						mc.zeichenobjekte_austragen(e);
-						Blockdiagramm.komponenteLöschen(e);
+						Blockdiagramm.komponenteLÃ¶schen(e);
 					}
 					mc.zeichnen();
 				}

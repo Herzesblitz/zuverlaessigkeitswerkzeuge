@@ -58,7 +58,7 @@ class Element extends Komponente{
 		if(parent != null && parent instanceof Struktur) {
 			parent.berechneWerte();
 		}
-		block.verfügbarkeit = verfuegbarkeit;
+		block.verfÃ¼gbarkeit = verfuegbarkeit;
 	}
 	
 	public void setZuverlassigkeit(double zuverlassigkeit) {
@@ -76,7 +76,7 @@ class Element extends Komponente{
 	
 	public void set_zuverlassigkeit(double r){
 		this.zuverlassigkeit = r;
-		block.zuverlässigkeit = zuverlassigkeit;
+		block.zuverlÃ¤ssigkeit = zuverlassigkeit;
 	}
 	
 	public void berechne_zuverlassigkeit(double t){
@@ -109,6 +109,7 @@ class Struktur extends Komponente{
 		
 		berechne_MTTR();
 		berechne_MTTF();
+
 	}
 	
 	public void passeGroesseAn(Komponente e, int min_x, int max_x, int min_y, int max_y) {
@@ -319,7 +320,7 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 	
 	int fak(int a){	
 		if(a == 0)return 1;
-		if(a<0)System.err.println("fak(n) für n<0 nicht definiert");
+		if(a<0)System.err.println("fak(n) fr n<0 nicht definiert");
 		if(a>0) {
 			return a*fak(a-1);
 		}
@@ -398,7 +399,7 @@ public class Blockdiagramm {
 	}
 			
 				
-	public static void komponenteEinfügen(Komponente e, Struktur parent) {
+	public static void komponenteEinfÃ¼gen(Komponente e, Struktur parent) {
 		parent.s.add(e);
 		e.parent = parent;
 		if(e instanceof Parallel_struktur) {
@@ -412,7 +413,7 @@ public class Blockdiagramm {
 		}
 	}
 	
-	public static void komponenteLöschen(Komponente e) {
+	public static void komponenteLÃ¶schen(Komponente e) {
 		e.parent.s.remove(e.parent.s.indexOf(e));
 	}
 	
