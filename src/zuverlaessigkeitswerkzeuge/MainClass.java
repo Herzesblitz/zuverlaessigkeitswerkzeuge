@@ -475,10 +475,10 @@ public class MainClass{
 						markedElement.block.x = x-markedElement.block.width/2;
 						markedElement.block.y = y-markedElement.block.height/2;
 						
-//						if(markedStruktur == null) {
-//							markedElement.offset_oberStruktur_x = markedElement.block.x -markedElement.parent.rahmen.x+ markedElement.block.width/2;
-//							markedElement.offset_oberStruktur_y = markedElement.block.y- markedElement.parent.rahmen.y+markedElement.block.height/2;
-//						}
+						if(markedStruktur == null) {
+							markedElement.offset_oberStruktur_x = markedElement.block.x -markedElement.parent.rahmen.x+ markedElement.block.width/2;
+							markedElement.offset_oberStruktur_y = markedElement.block.y- markedElement.parent.rahmen.y+markedElement.block.height/2;
+						}
 						
 						//System.out.println(markedElement.parent.name);
 						//System.out.println(markedElement.parent.rahmen.x+" "+markedElement.parent.rahmen.y);
