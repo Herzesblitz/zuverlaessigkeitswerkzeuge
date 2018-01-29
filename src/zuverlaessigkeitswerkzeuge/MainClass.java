@@ -39,7 +39,7 @@ public class MainClass{
 	}
 	
 	public static void aendereEigenschaften(Struktur s) {
-		//markedStruktur = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, s.rahmen.x+10, s.rahmen.y+10);
+		
 		if(markedStruktur == null) {
 			System.err.println("Struktur kann nicht geändert werden! keine Struktur ausgewählt");
 		}
@@ -56,10 +56,11 @@ public class MainClass{
 			}
 			//system.out.println("parent der struktur: "+s.parent.name);
 
-			if(s.parent != null) {
-				if(s.parent instanceof Parallel_struktur) ((Parallel_struktur) s.parent).berechneWerte(); 
-				if(s.parent instanceof Serielle_struktur) ((Serielle_struktur) s.parent).berechneWerte(); 
-				if(s.parent instanceof K_aus_N_struktur_gleichwertig) ((K_aus_N_struktur_gleichwertig) s.parent).berechneWerte(); 
+			if(markedStruktur.parent != null) {
+				System.out.println(markedStruktur.parent.name);
+				if(markedStruktur.parent instanceof Parallel_struktur) ((Parallel_struktur) s.parent).berechneWerte(); 
+				if(markedStruktur.parent instanceof Serielle_struktur) ((Serielle_struktur) s.parent).berechneWerte(); 
+				if(markedStruktur.parent instanceof K_aus_N_struktur_gleichwertig) ((K_aus_N_struktur_gleichwertig) s.parent).berechneWerte(); 
 			}
 				//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 			mf.zeichneObjekte(MainFrame.jc);
@@ -89,15 +90,20 @@ public class MainClass{
 		if(e.parent != null) {
 			if(e.parent instanceof Parallel_struktur) {
 				((Parallel_struktur) e.parent).berechneWerte(); 
+				markedStruktur = e.parent;
 				aendereEigenschaften(e.parent);
+				markedStruktur = null;
 			}
 			if(e.parent instanceof Serielle_struktur) {
 				((Serielle_struktur) e.parent).berechneWerte(); 
+				markedStruktur = e.parent;
 				aendereEigenschaften(e.parent);
-			}
+				markedStruktur = null;			}
 			if(e.parent instanceof K_aus_N_struktur_gleichwertig) {
 				((K_aus_N_struktur_gleichwertig) e.parent).berechneWerte(); 
+				markedStruktur = e.parent;
 				aendereEigenschaften(e.parent);
+				markedStruktur = null;
 			}
 		}
 		 //System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
@@ -228,22 +234,22 @@ public class MainClass{
 		
 	
 	//fuegt einzelne Elemente zu einer Struktur im BD hinzu
-		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y, Serielle_struktur parent) {
+		public static void serielleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y) {
+			markedStruktur = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
 			markedStruktur.rahmen.color =Color.BLACK; 
 			mf.zeichneObjekte(MainFrame.jc); 
-			//TODO: Struktur nach einf immer noch rot(markiert?)
-			Element neu = new Element(name, MTTF, MTTR, parent);
-			if(parent.s.size() > 0) {
+			Element neu = new Element(name, MTTF, MTTR, markedStruktur);
+			if(markedStruktur.s.size() > 0) {
 				int last_x = 0; int last_y=0; int last_width=0; int last_heigth=0;
-				if(parent.s.get(parent.s.size()-1) instanceof Element) {
-					Element last = (Element) parent.s.get(parent.s.size()-1);
+				if(markedStruktur.s.get(markedStruktur.s.size()-1) instanceof Element) {
+					Element last = (Element) markedStruktur.s.get(markedStruktur.s.size()-1);
 					last_x = last.block.x; last_y = last.block.y; last_width = last.block.width; last_heigth = last.block.height;
 					
 					neu.block.x = last_x+ last_width+10; neu.block.y = last_y; neu.block.width = last_width; neu.block.height = last_heigth;
 					neu.vorg_line = new Line(last_x,last_y +last_heigth/2,last_x + last_width, last_y+ last_heigth/2, Color.black);
 				}
-				if(parent.s.get(parent.s.size()-1) instanceof Struktur) {
-					Struktur last = (Struktur) parent.s.get(parent.s.size()-1);
+				if(markedStruktur.s.get(markedStruktur.s.size()-1) instanceof Struktur) {
+					Struktur last = (Struktur) markedStruktur.s.get(markedStruktur.s.size()-1);
 					last_x = last.rahmen.x; last_y = last.rahmen.y; last_width = last.rahmen.width; last_heigth = last.rahmen.height;
 					
 					neu.block.x = last_x+ last_width+10; neu.block.y = last_y; neu.block.width = 150; neu.block.height = 150;
@@ -254,7 +260,8 @@ public class MainClass{
 				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 150;
 				neu.vorg_line = null;
 			}
-			Blockdiagramm.komponenteEinfügen(neu, parent);
+				Blockdiagramm.komponenteEinfügen(neu, markedStruktur); //TODO: mglw. fehlerhaft
+			//markedStruktur.einfuegen(markedStruktur.s.size()-1, neu);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -286,7 +293,8 @@ public class MainClass{
 				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 150;
 				neu.vorg_line = null;
 			}
-			Blockdiagramm.komponenteEinfügen(neu, parent);
+				//Blockdiagramm.komponenteEinfügen(neu, parent); //TODO: mglw. fehlerhaft
+			markedStruktur.einfuegen(markedStruktur.s.size()-1, neu);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -323,7 +331,8 @@ public class MainClass{
 				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 150;
 				neu.vorg_line = null;
 			}
-			Blockdiagramm.komponenteEinfügen(neu, parent);
+				//Blockdiagramm.komponenteEinfügen(neu, parent); //TODO: mglw. fehlerhaft
+			parent.einfuegen(parent.s.size()-1, neu);
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
@@ -459,61 +468,60 @@ public class MainClass{
 					if(markedElement==null) {
 					}
 					else {
+						//System.out.println(markedElement.name+" "+markedElement.parent.name+" "+markedElement.parent.s.get(0).name);
 						//TODO: Kollisionspruefung
 						
 						//Blockverschiebung
 						markedElement.block.x = x-markedElement.block.width/2;
 						markedElement.block.y = y-markedElement.block.height/2;
 						
-						if(markedStruktur == null) {
-							markedElement.offset_oberStruktur_x = markedElement.block.x -markedElement.parent.rahmen.x;
-							markedElement.offset_oberStruktur_y = markedElement.block.y- markedElement.parent.rahmen.y;
-						}
+//						if(markedStruktur == null) {
+//							markedElement.offset_oberStruktur_x = markedElement.block.x -markedElement.parent.rahmen.x+ markedElement.block.width/2;
+//							markedElement.offset_oberStruktur_y = markedElement.block.y- markedElement.parent.rahmen.y+markedElement.block.height/2;
+//						}
 						
 						//System.out.println(markedElement.parent.name);
 						//System.out.println(markedElement.parent.rahmen.x+" "+markedElement.parent.rahmen.y);
 						//System.out.println(markedElement.block.x+" "+markedElement.block.y);
 						//System.out.println(markedElement.offset_oberStruktur_x+ " " +markedElement.offset_oberStruktur_y);
 							
-						//TODO: linien werden tw. ueber bloecken gezeichnet
 						//Lineberechnung
-						//spezialfall: erstes Element in AL der parent-struktur
-//TODO: wird nie aufgerufen	
-							if(markedElement.parent.s.get(0).equals(markedElement) && markedElement.parent.s.size() >1) {
-								((Element) markedElement.parent.s.get(1)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
-								((Element) markedElement.parent.s.get(1)).vorg_line.y2 = markedElement.block.y + markedElement.block.height / 2;
-		//							System.out.println(((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 + " "+ ((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 );
-							}
+						
 						//sonst
-							if(markedElement.vorg_line != null) {
-								if(markedElement.parent instanceof Parallel_struktur) {
-									markedElement.vorg_line.x1 = markedElement.block.x + markedElement.block.width/2;
-									markedElement.vorg_line.y1 = markedElement.block.y + markedElement.block.height;
-								}
-								if(markedElement.parent instanceof Struktur || markedElement.parent instanceof Serielle_struktur) { //TODO: Struktur-Teil ist schlechter fix
-									markedElement.vorg_line.x1 = markedElement.block.x ;
-									markedElement.vorg_line.y1 = markedElement.block.y + markedElement.block.height/2 ;
-									
-									//vorgeaenge koord
-									int index_vorg =   markedElement.parent.s.indexOf(markedElement)-1;
-									if(index_vorg > 0) {
-										markedElement.vorg_line.x2 = ((Element) markedElement.parent.s.get(index_vorg)).block.x + ((Element) markedElement.parent.s.get(index_vorg)).block.width ;
-										markedElement.vorg_line.y2 = ((Element) markedElement.parent.s.get(index_vorg)).block.y + ((Element) markedElement.parent.s.get(index_vorg)).block.height / 2;
+								if(markedElement.parent instanceof Parallel_struktur || markedElement.parent instanceof K_aus_N_struktur_gleichwertig) {
+									int index = markedElement.parent.s.indexOf(markedElement);
+//									
+									//System.out.println(index);
+
+									if(index > 0) {
+										markedElement.vorg_line.x1 = markedElement.block.x + markedElement.block.width/2;
+										markedElement.vorg_line.y1 = markedElement.block.y;
+										markedElement.vorg_line.x2 = ((Element) markedElement.parent.s.get(index-1)).block.x + ((Element) markedElement.parent.s.get(index-1)).block.width/2;
+										markedElement.vorg_line.y2 = ((Element) markedElement.parent.s.get(index-1)).block.y + ((Element) markedElement.parent.s.get(index-1)).block.height;
 									}
-								
-									//nachfolger koord
-									int index_nachfol =   markedElement.parent.s.indexOf(markedElement)+1;
-									if(index_nachfol < markedElement.parent.s.size()) {
-										((Element) markedElement.parent.s.get(index_nachfol)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
-										((Element) markedElement.parent.s.get(index_nachfol)).vorg_line.y2 = markedElement.block.y + markedElement.block.height / 2;
-			//							System.out.println(((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).x2 + " "+ ((Element) markedElement.parent.s.get(index_nachfol)).lines.get(0).y2 );
-									
+									if(index < markedElement.parent.s.size()-1) {
+										((Element) markedElement.parent.s.get(index+1)).vorg_line.x2 = markedElement.block.x + markedElement.block.width/2;
+										((Element) markedElement.parent.s.get(index+1)).vorg_line.y2 = markedElement.block.y + markedElement.block.height;
+									}
+
+								}
+								else { //if(markedElement.parent instanceof Struktur || markedElement.parent instanceof Serielle_struktur) { 
+									int index = markedElement.parent.s.indexOf(markedElement);
+									if(index > 0) {
+										markedElement.vorg_line.x1 = markedElement.block.x;
+										markedElement.vorg_line.y1 = markedElement.block.y + markedElement.block.height/2;
+										markedElement.vorg_line.x2 = ((Element) markedElement.parent.s.get(index-1)).block.x + ((Element) markedElement.parent.s.get(index-1)).block.width;
+										markedElement.vorg_line.y2 = ((Element) markedElement.parent.s.get(index-1)).block.y + ((Element) markedElement.parent.s.get(index-1)).block.height/2;
+									}
+									if(index < markedElement.parent.s.size()-1) {
+										((Element) markedElement.parent.s.get(index+1)).vorg_line.x2 = markedElement.block.x + markedElement.block.width;
+										((Element) markedElement.parent.s.get(index+1)).vorg_line.y2 = markedElement.block.y + markedElement.block.height/2;
 									}
 								}
 						}
 							mf.zeichneObjekte(MainFrame.jc);
-					}
 				}
+				
 								
 				public static void elementGroesseVeraendern(int x, int y) {
 					
@@ -584,7 +592,8 @@ public class MainClass{
 						markedStruktur.rahmen.x = x-markedStruktur.rahmen.width/2;
 						markedStruktur.rahmen.y = y-markedStruktur.rahmen.height/2;
 						
-						//Blockdiagramm.offsetneuberechnen(markedStruktur,t);
+						markedStruktur.setVorg_line();
+						//Blockdiagramm.offsetneuberechnen(markedStruktur,x,y);
 						
 						//System.out.println(dif_x+ " " +dif_y);
 						//TODO: mit Devin: wie substrukturen verschieben?
@@ -660,6 +669,7 @@ public class MainClass{
 				private void zeichenobjekte_eintragen(Komponente S) {
 						if(S instanceof Struktur) {
 							MainFrame.jc.zeichnen.add(((Struktur) S).rahmen);
+							MainFrame.jc.zeichnen.add(((Struktur) S).vorg_linie);
 							for(Komponente k: ((Struktur) S).s){
 								zeichenobjekte_eintragen(k);
 							}

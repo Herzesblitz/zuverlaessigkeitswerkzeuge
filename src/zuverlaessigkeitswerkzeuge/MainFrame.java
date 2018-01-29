@@ -24,7 +24,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import sun.applet.Main;
 
 
 //import sun.awt.RepaintArea;
@@ -638,7 +637,7 @@ class JCanvas extends JComponent
 					if(arg0.getSource() == Element_Einfügen) {
 						zeiger = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 						if(zeiger instanceof Serielle_struktur) {
-							MainClass.serielleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Serielle_struktur) zeiger);
+							MainClass.serielleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX);
 						}
 						if(zeiger instanceof Parallel_struktur) {
 							MainClass.paralleleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Parallel_struktur) zeiger);

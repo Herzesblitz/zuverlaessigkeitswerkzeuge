@@ -103,7 +103,7 @@ class Struktur extends Komponente{
 	ArrayList<Komponente> s = new ArrayList<Komponente>();
 	Struktur parent;
 	Rahmen rahmen;
-	Line vorg_linie;
+	Line vorg_linie = new Line(0, 0, 0, 0, Color.BLACK);
 	int offset_oberStruktur_x = 0; int offset_oberStruktur_y=0;
 	
 	public void setWidth(int width) {
@@ -169,17 +169,51 @@ class Struktur extends Komponente{
 			for(int i=index; i<s.size(); i++) s_.add(s.get(i));
 			s = s_;
 		}
+		if(k instanceof Parallel_struktur) {
+			((Parallel_struktur) k).berechneWerte();	
+		}
+		if(k instanceof Serielle_struktur) {
+			((Serielle_struktur) k).berechneWerte();	
+		}
+		if(k instanceof K_aus_N_struktur_gleichwertig) {
+			((K_aus_N_struktur_gleichwertig) k).berechneWerte();
+		}
 	}
 	
 	
 
 	//TODO: setVorg_lineimplementieren
-	public void setVorg_line(Struktur Vorgaenger) {
-		if(this.parent == null || this.parent instanceof Serielle_struktur) {
-			
-		}
-		else if(this.parent instanceof Parallel_struktur || this.parent instanceof K_aus_N_struktur_gleichwertig) {
+	public void setVorg_line() {
+		if(this.parent == null)return;
+		if(this.parent instanceof Serielle_struktur) {
+			int index = parent.s.indexOf(this);
+			if(index > 0) {
+				vorg_linie.x1 = rahmen.x;
+				vorg_linie.y1 = rahmen.y + rahmen.height/2;
+				if(parent.s.get(index-1) instanceof Struktur) {
+					vorg_linie.x2 = ((Struktur)parent.s.get(index-1)).rahmen.x + ((Struktur)parent.s.get(index-1)).rahmen.width;
+					vorg_linie.y2 = ((Struktur)parent.s.get(index-1)).rahmen.y + ((Struktur)parent.s.get(index-1)).rahmen.height /2 ;
+
 				
+				if(parent.s.get(index-1) instanceof Element) {
+					vorg_linie.x2 = ((Element)parent.s.get(index-1)).block.x + ((Element)parent.s.get(index-1)).block.width;
+					vorg_linie.y2 = ((Element)parent.s.get(index-1)).block.y + ((Element)parent.s.get(index-1)).block.height /2 ;
+				}}
+			}
+		}
+		else if(this.parent instanceof Parallel_struktur || this.parent instanceof K_aus_N_struktur_gleichwertig) {			int index = parent.s.indexOf(this);
+			if(index > 0) {
+				vorg_linie.x1 = rahmen.x + rahmen.width/2;
+				vorg_linie.y1 = rahmen.y;
+				if(parent.s.get(index-1) instanceof Struktur) {
+					vorg_linie.x2 = ((Struktur)parent.s.get(index-1)).rahmen.x + ((Struktur)parent.s.get(index-1)).rahmen.width/2;
+					vorg_linie.y2 = ((Struktur)parent.s.get(index-1)).rahmen.y + ((Struktur)parent.s.get(index-1)).rahmen.height;
+				}
+				if(parent.s.get(index-1) instanceof Element) {
+					vorg_linie.x2 = ((Element)parent.s.get(index-1)).block.x + ((Element)parent.s.get(index-1)).block.width/2;
+					vorg_linie.y2 = ((Element)parent.s.get(index-1)).block.y + ((Element)parent.s.get(index-1)).block.height;
+				}
+			}	
 		}
 	}
 	
