@@ -357,6 +357,7 @@ class JCanvas extends JComponent
 			    JMenuItem Eigenschaften;
 			    JMenuItem Aussehen;
 			    JMenuItem Element_hinzufuegen_dahinter;
+			    JMenuItem Element_hinzufuegen_darunter;
 			    JMenuItem Element_loeschen;
 			    JMenuItem Struktur_hinzufuegen;
 			
@@ -366,14 +367,23 @@ class JCanvas extends JComponent
 			    	Eigenschaften = new JMenuItem("Eigenschaften");
 			    	Aussehen = new JMenuItem("Aussehen");
 			    	Element_hinzufuegen_dahinter = new JMenuItem("Element dahinter hinzufuegen");
+			    	Element_hinzufuegen_darunter = new JMenuItem("Element darunter hinzufuegen");
 			    	Struktur_hinzufuegen = new JMenuItem("Struktur hinzufuegen");
 			    	Element_loeschen = new JMenuItem("Element Löschen");
 			    	
-			        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen); add(Element_hinzufuegen_dahinter); add(Element_loeschen);
+			        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen);add(Element_loeschen);
+			        if(MainClass.markedElement != null) {
+			        	   if(MainClass.markedElement.parent instanceof Parallel_struktur)add(Element_hinzufuegen_darunter);
+					       if(MainClass.markedElement.parent instanceof Serielle_struktur)add(Element_hinzufuegen_dahinter);				        
+			        }
+			     
 			        //Buttons zum Actionlistener hinzufuegen
 			        	Eigenschaften.addActionListener(this);
 			        	Aussehen.addActionListener(this);
-			        	Element_hinzufuegen_dahinter.addActionListener(this);
+				        if(MainClass.markedElement != null) {
+				        	if(MainClass.markedElement.parent instanceof Serielle_struktur)Element_hinzufuegen_dahinter.addActionListener(this);
+				        	if(MainClass.markedElement.parent instanceof Parallel_struktur)Element_hinzufuegen_darunter.addActionListener(this);
+				        }				
 			        	Struktur_hinzufuegen.addActionListener(this);
 			        	Element_loeschen.addActionListener(this);
 			    }
@@ -393,6 +403,12 @@ class JCanvas extends JComponent
 						zeiger = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
 						if(zeiger != null) {
 							MainClass.serielleStruktur_nachbar_einf(zeiger.name, zeiger.MTTF, zeiger.MTTR,zeiger.block.x, zeiger.block.y);
+						}
+					}
+					if(e.getSource() == Element_hinzufuegen_darunter) {
+						zeiger = Blockdiagramm.sucheElement(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+						if(zeiger != null) {
+							MainClass.parallelStruktur_nachbar_einf(zeiger.name, zeiger.MTTF, zeiger.MTTR,zeiger.block.x, zeiger.block.y);
 						}
 					}
 					if(e.getSource() == Element_loeschen) {
@@ -564,18 +580,20 @@ class JCanvas extends JComponent
 				Struktur zeiger;
 				JMenuItem Struktureigenschaften;
 				JMenuItem Element_Einfügen;
-				JMenuItem Struktur_Einfügen;
+				JMenuItem serielle_Struktur_Einfügen;
+				JMenuItem paralle_Struktur_Einfügen;
 				Eigenschaftenfenster_struktur eig_fenster;
 				JMenuItem Struktur_Löschen;
 				
 				 public DropDownMenuStruktur(){
 					 Struktureigenschaften = new JMenuItem("Struktureigenschaften");
 					 Element_Einfügen = new JMenuItem("Element Einfügen");
-					 Struktur_Einfügen = new JMenuItem("Struktur Einfügen");
+					 serielle_Struktur_Einfügen = new JMenuItem("serielle Struktur Einfügen");
+					 paralle_Struktur_Einfügen = new JMenuItem("parallele Struktur Einfügen");
 					 Struktur_Löschen = new JMenuItem("Struktur Löschen");
 
-					 add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen);
-					 Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this);
+					 add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen); add(serielle_Struktur_Einfügen); add(paralle_Struktur_Einfügen);
+					 Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  serielle_Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this); paralle_Struktur_Einfügen.addActionListener(this);
 					
 				 }
 
@@ -591,12 +609,15 @@ class JCanvas extends JComponent
 							MainClass.serielleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Serielle_struktur) zeiger);
 						}
 						if(zeiger instanceof Parallel_struktur) {
-							
+							MainClass.paralleleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Parallel_struktur) zeiger);
 						}
 					}
 					//TODO Struktur_Einfügen implementieren
-					if(arg0.getSource() == Struktur_Einfügen) {
-						
+					if(arg0.getSource() == serielle_Struktur_Einfügen) {
+						MainClass.serielleStruktur_einf(MainFrame.posX, MainFrame.posY);
+					}
+					if(arg0.getSource() == paralle_Struktur_Einfügen) {
+						MainClass.paralleleStruktur_einf_(MainFrame.posX, MainFrame.posY);
 					}
 					if(arg0.getSource() == Struktur_Löschen) {
 						MainClass.strukturLöschen(MainFrame.posX, MainFrame.posY);

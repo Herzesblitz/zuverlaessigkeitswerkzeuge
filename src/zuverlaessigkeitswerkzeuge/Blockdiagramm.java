@@ -19,7 +19,7 @@ class Komponente{
 class Element extends Komponente{
 	Struktur parent;
 
-	
+	int offset_oberStruktur_x = 0; int offset_oberStruktur_y=0;
 	Block block = new Block(0, 0, 150, 150,Color.blue);
 	Line vorg_line;
 	
@@ -103,6 +103,7 @@ class Struktur extends Komponente{
 	Struktur parent;
 	Rahmen rahmen;
 	Line vorg_linie;
+	int offset_oberStruktur_x = 0; int offset_oberStruktur_y=0;
 
 
 	public Struktur(ArrayList<Komponente> k, String name, int x, int y, int height, int width){
@@ -112,12 +113,10 @@ class Struktur extends Komponente{
 	}
 	
 	public void berechneWerte() {
-		
 		berechne_MTTR();
 		berechne_MTTF();
-
 	}
-	
+		
 	public void passeGroesseAn(Komponente e, int min_x, int max_x, int min_y, int max_y) {
 		if(e instanceof Element) {
 			if(((Element) e).block.x < min_x) min_x = ((Element) e).block.x - 100;
@@ -147,8 +146,10 @@ class Struktur extends Komponente{
 			s = s_;
 		}
 	}
-
 	
+	
+
+	//TODO: setVorg_lineimplementieren
 	public void setVorg_line(Struktur Vorgaenger) {
 		if(this.parent == null || this.parent instanceof Serielle_struktur) {
 			
@@ -190,6 +191,10 @@ class Struktur extends Komponente{
 	
 	public void berechne_MTTR(){
 		this.MTTR = ((1-this.verfuegbarkeit)/this.verfuegbarkeit)*this.MTTF;
+	}
+	
+	public void setName() {
+		
 	}
 }
  
@@ -420,6 +425,13 @@ public class Blockdiagramm {
 		}
 	}
 	
+
+	public static void strukturEinf(Struktur e, Struktur parent) {
+		System.out.println(e.rahmen.x+" "+e.rahmen.y+" "+e.rahmen.height+" "+e.rahmen.width+" ");
+		parent.s.add(e);
+		e.parent = parent;
+	}
+	
 	public static void komponenteLöschen(Komponente k, Struktur parent) {
 		//Element e = sucheElement(anfang, x, y);
 //		if(e != null) {
@@ -431,6 +443,13 @@ public class Blockdiagramm {
 //		     k.parent.s.remove(k.parent.s.indexOf(k));
 //		}
 		parent.s.remove(parent.s.indexOf(k));
+	}
+	
+	public static void offsetneuberechnen(Struktur e,int x, int y) {
+		Struktur parent = sucheStruktur(anfang, x, y);
+		e.offset_oberStruktur_x = e.parent.rahmen.x - parent.rahmen.x;
+		e.offset_oberStruktur_y = e.parent.rahmen.y - parent.rahmen.y;
+
 	}
 	
 	

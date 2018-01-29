@@ -49,7 +49,14 @@ public class MainClass{
 		markedStruktur.rahmen.height = s.rahmen.height;
 		markedStruktur.rahmen.width = s.rahmen.width;
 		markedStruktur.rahmen.color = s.rahmen.color;
-		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
+		System.out.println("parent der struktur: "+s.parent.name);
+
+		if(s.parent != null) {
+			if(s.parent instanceof Parallel_struktur) ((Parallel_struktur) s.parent).berechneWerte(); 
+			if(s.parent instanceof Serielle_struktur) ((Serielle_struktur) s.parent).berechneWerte(); 
+			if(s.parent instanceof K_aus_N_struktur_gleichwertig) ((K_aus_N_struktur_gleichwertig) s.parent).berechneWerte(); 
+		}
+			//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 		mf.zeichneObjekte(MainFrame.jc);
 	}
 	
@@ -66,7 +73,6 @@ public class MainClass{
 
 	
 	public static void aendereEigenschaften(Element e) {
-		
 		markedElement = Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10);
 		markedElement.setName(e.name);
 		markedElement.setMTTF(e.MTTF);
@@ -74,10 +80,25 @@ public class MainClass{
 		markedElement.set_zuverlassigkeit(e.zuverlassigkeit);
 		markedElement.setVerfuegbarkeit(e.verfuegbarkeit);
 		markedElement.block.werteUebernehmen(e.block);
-
-		//System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
+		if(e.parent != null) {
+			if(e.parent instanceof Parallel_struktur) {
+				((Parallel_struktur) e.parent).berechneWerte(); 
+				aendereEigenschaften(e.parent);
+				}
+			if(e.parent instanceof Serielle_struktur) {
+				((Serielle_struktur) e.parent).berechneWerte(); 
+				aendereEigenschaften(e.parent);
+			}
+			if(e.parent instanceof K_aus_N_struktur_gleichwertig) {
+				((K_aus_N_struktur_gleichwertig) e.parent).berechneWerte(); 
+				aendereEigenschaften(e.parent);
+			}
+		}
+		 //System.out.println("test: "+Blockdiagramm.sucheElement(Blockdiagramm.anfang, e.block.x+10, e.block.y+10).name);
 		mf.zeichneObjekte(MainFrame.jc);
-	}
+	}		
+	  
+	
 	
 	private void setDimensions(Struktur S, int heigth, int width) {
 		for(int i=0; i<S.s.size(); i++) {
@@ -141,6 +162,24 @@ public class MainClass{
 				//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
 			mc.zeichnen();
 		}
+		
+		public static void serielleStruktur_einf(int x, int y) {
+			Struktur parent = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
+			Serielle_struktur neu = new Serielle_struktur(new ArrayList<Komponente>(), parent.name+" (Unterstruktur (seriell))", parent, parent.rahmen.x + 50, parent.rahmen.y + 50 , parent.rahmen.height-100, parent.rahmen.width-100);
+			Blockdiagramm.strukturEinf(neu, parent);
+			mc.zeichenobjekte_eintragen(neu);
+			//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
+			mc.zeichnen();
+		}
+		
+		public static void paralleleStruktur_einf_(int x, int y) {
+			Struktur parent = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, x, y);
+			Parallel_struktur neu = new Parallel_struktur(new ArrayList<Komponente>(), parent.name+" (Unterstruktur (parallel))", parent, parent.rahmen.x + 50, parent.rahmen.y + 50 , parent.rahmen.height-100, parent.rahmen.width-100);
+			Blockdiagramm.strukturEinf(neu, parent);
+			mc.zeichenobjekte_eintragen(neu);
+			//for(_2DObject a: mc.mf.jc.zeichnen)System.out.println("zo: "+a.toString());
+			mc.zeichnen();
+		}
 	
 		public static void Komponente_einf_kontextlos(String name, double MTTF, double MTTR, int x, int y) {
 			Element neu = new Element(name, MTTF, MTTR, Blockdiagramm.anfang);
@@ -198,6 +237,38 @@ public class MainClass{
 			mc.zeichenobjekte_eintragen(neu);
 			mf.zeichneObjekte(MainFrame.jc);
 		}
+		
+		public static void paralleleStruktur_erweitern(String name, double MTTF, double MTTR,int x, int y, Parallel_struktur parent) {
+			markedStruktur.rahmen.color =Color.BLACK; 
+			mf.zeichneObjekte(MainFrame.jc); 
+			//TODO: Struktur nach einf immer noch rot(markiert?)
+			Element neu = new Element(name, MTTF, MTTR, parent);
+			if(parent.s.size() > 0) {
+				int last_x = 0; int last_y=0; int last_width=0; int last_heigth=0;
+				if(parent.s.get(parent.s.size()-1) instanceof Element) {
+					Element last = (Element) parent.s.get(parent.s.size()-1);
+					last_x = last.block.x; last_y = last.block.y; last_width = last.block.width; last_heigth = last.block.height;
+					
+					neu.block.x = last_x; neu.block.y = last_y+last_width+10; neu.block.width = last_width; neu.block.height = last_heigth;
+					neu.vorg_line = new Line(neu.block.x + neu.block.width/2, neu.block.y, last_x+last_width/2, last_y+last_heigth, Color.black);
+							//new Line(last_x+last_width/2,last_y,last_x + last_width/2, last_y+ last_heigth, Color.black);
+				}
+				if(parent.s.get(parent.s.size()-1) instanceof Struktur) {
+					Struktur last = (Struktur) parent.s.get(parent.s.size()-1);
+					last_x = last.rahmen.x; last_y = last.rahmen.y; last_width = last.rahmen.width; last_heigth = last.rahmen.height;
+					
+					neu.block.x = last_x+ last_width+10; neu.block.y = last_y; neu.block.width = 100; neu.block.height = 100;
+					neu.vorg_line = new Line(last_x,last_y +last_heigth/2,last_x + last_width, last_y+ last_heigth/2, Color.black);
+				} 
+			}
+			else {
+				neu.block.x = neu.block.y = neu.block.width = neu.block.height = 100;
+				neu.vorg_line = null;
+			}
+			Blockdiagramm.komponenteEinfügen(neu, parent);
+			mc.zeichenobjekte_eintragen(neu);
+			mf.zeichneObjekte(MainFrame.jc);
+		}
 
 		
 		
@@ -221,13 +292,17 @@ public class MainClass{
 		 * fuegt ein Element zu parallelen Struktur hinzu
 		 * Position wird durch klicken auf Element in pS indentifiziert
 		 */
-		public void parallelStruktur_nachbar_einf(String name, double MTTF, double MTTR,int x, int y) {
+		public static void parallelStruktur_nachbar_einf(String name, double MTTF, double MTTR,int x, int y) {
+			System.out.println("2223254");
 			Element e =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, x, y);
 			int pos = e.parent.s.indexOf(e);
 				Element neu = new Element(name, MTTF, MTTR, e.parent);
-				neu.block.x = x; neu.block.y = y;
-				neu.vorg_line = new Line(e.block.x + e.block.width/2, e.block.y, neu.block.x + neu.block.width/2, neu.block.y + neu.block.height, Color.black);
-			e.parent.einfuegen(pos, neu);		
+				neu.block.x = e.block.x; neu.block.y = e.block.y + e.block.height +10;
+				neu.vorg_line = new Line(e.block.x+neu.block.width/2, e.block.y + ((int) e.block.height)+10,e.block.x+(e.block.width/2),e.block.y+e.block.height,Color.BLACK); //
+						//e.block.x + e.block.width/2, e.block.y, neu.block.x + neu.block.width/2, neu.block.y + neu.block.height, Color.black);
+			e.parent.einfuegen(pos, neu);	
+			mc.zeichenobjekte_eintragen(neu);
+			mf.zeichneObjekte(MainFrame.jc);
 		}
 		
 		/**
@@ -335,13 +410,25 @@ public class MainClass{
 				}
 				
 				public static void elementVerschieben(int x, int y) {
-					if(markedElement==null)return;
+					if(markedElement==null) {
+					}
 					else {
 						//TODO: Kollisionspruefung
 						
 						//Blockverschiebung
 						markedElement.block.x = x-markedElement.block.width/2;
 						markedElement.block.y = y-markedElement.block.height/2;
+						
+						if(markedStruktur == null) {
+							markedElement.offset_oberStruktur_x = markedElement.block.x -markedElement.parent.rahmen.x;
+							markedElement.offset_oberStruktur_y = markedElement.block.y- markedElement.parent.rahmen.y;
+						}
+						
+						System.out.println(markedElement.parent.name);
+						//System.out.println(markedElement.parent.rahmen.x+" "+markedElement.parent.rahmen.y);
+						//System.out.println(markedElement.block.x+" "+markedElement.block.y);
+						System.out.println(markedElement.offset_oberStruktur_x+ " " +markedElement.offset_oberStruktur_y);
+							
 						//TODO: linien werden tw. ueber bloecken gezeichnet
 						//Lineberechnung
 						//spezialfall: erstes Element in AL der parent-struktur
@@ -433,15 +520,27 @@ public class MainClass{
 				
 				public static void strukturVerschieben(int x, int y) {
 					if(markedStruktur == null)return;
-					else {
+					else {		
+						int dif_x =  x-markedStruktur.rahmen.width/2;
+						int dif_y =  y-markedStruktur.rahmen.height/2;
+					
 						markedStruktur.rahmen.x = x-markedStruktur.rahmen.width/2;
 						markedStruktur.rahmen.y = y-markedStruktur.rahmen.height/2;
-//TODO: mit Devin: wie substrukturen verschieben?
+						
+						//Blockdiagramm.offsetneuberechnen(markedStruktur,t);
+						
+						System.out.println(dif_x+ " " +dif_y);
+						//TODO: mit Devin: wie substrukturen verschieben?
+						System.out.println("verschiebe ...");
 						for(Komponente k: markedStruktur.s) {
-							if(k instanceof Element)elementVerschieben(((Element) k).block.x+x, ((Element) k).block.y+y);
-							else if(k instanceof Struktur){
-								strukturVerschieben(x-markedStruktur.rahmen.x, y-markedStruktur.rahmen.y); //TODO: vllt falsch
+							if(k instanceof Element) {
+								markedElement = (Element) k;
+								elementVerschieben(markedElement.offset_oberStruktur_x+dif_x,markedElement.offset_oberStruktur_y+dif_y);
+								markedElement = null;
 							}
+//							else if(k instanceof Struktur){
+//								strukturVerschieben(x-markedStruktur.rahmen.x, y-markedStruktur.rahmen.y); //TODO: vllt falsch
+//							}
 						}
 						mf.zeichneObjekte(MainFrame.jc);
 					}
