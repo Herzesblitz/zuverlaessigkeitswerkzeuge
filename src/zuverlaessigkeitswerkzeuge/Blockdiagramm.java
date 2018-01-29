@@ -27,7 +27,7 @@ class Element extends Komponente{
 		super(name, MTTF, MTTR);
 		block.name = name; block.mttf = MTTF; block.mttr = MTTR;
 		this.parent = parent;
-		berechne_zuverlassigkeit(1);
+		berechne_zuverlassigkeit();
 		berechne_verfuegbarkeit();
 		berechne_MTBF();
 	}
@@ -35,7 +35,7 @@ class Element extends Komponente{
 	public void setMTTF(double MTTF) {
 		this.MTTF = MTTF;
 		berechne_verfuegbarkeit();
-		berechne_zuverlassigkeit(1);
+		berechne_zuverlassigkeit();
 		berechne_MTBF();
 		if(parent != null && parent instanceof Struktur) {
 			parent.berechneWerte();
@@ -79,9 +79,10 @@ class Element extends Komponente{
 		block.zuverlässigkeit = zuverlassigkeit;
 	}
 	
-	public void berechne_zuverlassigkeit(double t){
-		this.zuverlassigkeit = ((double) 1/(double)Math.pow(Math.E, MTTF*t));  
-		System.out.println(this.zuverlassigkeit);
+	public void berechne_zuverlassigkeit(){
+		double a = Math.pow(Math.E, 1/MTTF);
+		double b = 1.0;
+		zuverlassigkeit = b/a;  
 		block.zuverlässigkeit = zuverlassigkeit;
 		if(parent instanceof Serielle_struktur) ((Serielle_struktur) parent).berechne_zuverlassigkeit(1);
 		if(parent instanceof Parallel_struktur) ((Parallel_struktur) parent).berechne_zuverlassigkeit();
@@ -104,8 +105,31 @@ class Struktur extends Komponente{
 	Rahmen rahmen;
 	Line vorg_linie;
 	int offset_oberStruktur_x = 0; int offset_oberStruktur_y=0;
-
-
+	
+	public void setWidth(int width) {
+		rahmen.width = width;
+	}
+	
+	public void setHeight(int height) {
+		rahmen.height = height;
+	}
+	
+	public void setName(String name) {
+		rahmen.name = name;
+		this.name = name;
+	}
+	
+	public void setMTTF(double MTTF) {
+		this.MTTF = MTTF;
+		rahmen.mttf = MTTF;
+	}
+	
+	public void setMTTR(double MTTR) {
+		this.MTTR = MTTR;
+		rahmen.mttr = MTTR;
+	}
+	
+	
 	public Struktur(ArrayList<Komponente> k, String name, int x, int y, int height, int width){
 		super(name, 0, 0);
 		rahmen = new Rahmen(name, x, y, height, width);
@@ -220,7 +244,7 @@ class Parallel_struktur extends Struktur{
 		for(Komponente a: s){
 			zuverlassigkeit*=(1-a.zuverlassigkeit);
 		}
-		System.out.println(this.zuverlassigkeit);
+		//System.out.println(this.zuverlassigkeit);
 		this.zuverlassigkeit = 1-this.zuverlassigkeit;
 		this.rahmen.zuverlässigkeit = zuverlassigkeit;
 	}
@@ -233,7 +257,7 @@ class Parallel_struktur extends Struktur{
 			this.verfuegbarkeit *= (1 - k.verfuegbarkeit);
 		}
 		this.verfuegbarkeit = 1-this.verfuegbarkeit;
-		this.rahmen.zuverlässigkeit = this.zuverlassigkeit;
+		this.rahmen.verfügbarkeit = this.verfuegbarkeit;
 	}
 	
 	public void berechne_MTTF(){
@@ -306,7 +330,7 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 	int k;
 	Struktur parent;
 	
-	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> k, String name, Struktur parent, int l,  int x, int y, int height, int width) {
+	public K_aus_N_struktur_gleichwertig(ArrayList<Komponente> k, String name, Struktur parent,  int x, int y, int height, int width, int l) {
 		super(k, name, x, y, height, width);
 		this.k = l;
 		this.parent = parent;
@@ -321,6 +345,12 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 //		berechne_MTTF();
 	}
 	
+	public void setK(int k) {
+		this.k = k;
+		rahmen.k = k;
+		System.out.println("k= "+k);
+		berechneWerte();
+	}
 
 	public void berechneWerte() {
 		berechne_zuverlassigkeit();
@@ -343,19 +373,29 @@ class K_aus_N_struktur_gleichwertig extends Struktur{
 	}
 
 	public void verfuegbarkeit(){
+		if(s.size() == 0)return;
 		double el_verf = s.get(0).verfuegbarkeit;
+		System.out.println("element k_n"+s.get(0).name+ " "+el_verf);
 		double n = s.size();
 		double uber_factor = n_uber_k(s.size(), k);
 		//System.out.println(k);
 		this.verfuegbarkeit = Math.pow(el_verf, n) + uber_factor*Math.pow(el_verf, k)*(1-(el_verf));
+		rahmen.verfügbarkeit = verfuegbarkeit;
 	}
 	
 	public void berechne_MTTF(){
+		if(s.size() == 0) return;
 		this.MTTF = s.get(0).MTTF / s.size() + s.get(0).MTTF / k;
 		this.rahmen.mttf = this.MTTF;
 	}
 	
+	public void berechne_MTTR(){
+		this.MTTR = ((1-this.verfuegbarkeit)/this.verfuegbarkeit)*this.MTTF;
+		rahmen.mttr = MTTR;
+	}
+	
 	public void berechne_zuverlassigkeit(){
+		if(s.size() == 0)return;
 		double el_zuv= s.get(0).zuverlassigkeit;
 		double n = s.size();
 		double uber_factor = n_uber_k(s.size(), k);
@@ -427,7 +467,8 @@ public class Blockdiagramm {
 	
 
 	public static void strukturEinf(Struktur e, Struktur parent) {
-		System.out.println(e.rahmen.x+" "+e.rahmen.y+" "+e.rahmen.height+" "+e.rahmen.width+" ");
+		//System.out.println(e.rahmen.x+" "+e.rahmen.y+" "+e.rahmen.height+" "+e.rahmen.width+" ");
+		//System.out.println(parent.name+" kind: "+e.name);
 		parent.s.add(e);
 		e.parent = parent;
 	}
@@ -506,7 +547,7 @@ public class Blockdiagramm {
 		
 		//disks
 		ArrayList<Komponente> k_d =new ArrayList<Komponente>(); 
-		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", system, 3, 0, 0, 0, 0);
+		K_aus_N_struktur_gleichwertig disks = new K_aus_N_struktur_gleichwertig(k_d, "disks", system, 0, 0, 0, 0, 3);
 			Element d1 = new Element("disk1",1800,4.5, disks);
 			Element d2 = new Element("disk2",1800,4.5, disks);
 			Element d3 = new Element("disk3",1800,4.5, disks);

@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import sun.applet.Main;
+
 
 //import sun.awt.RepaintArea;
 
@@ -39,6 +41,7 @@ class Rahmen extends _2DObject{
 	   double mttr= 0;
 	   double verfügbarkeit;
 	   double zuverlässigkeit;
+	   int k;
 	   
 	   public Rahmen(String name, int x, int y, int height, int width) {
 		   this.name = name; this.x = x; this.y = y; this.height = height; this.width = width; 
@@ -99,10 +102,10 @@ class JCanvas extends JComponent
 		    g2.fillRect(((Block) a).x+5,((Block) a).y+5,((Block) a).width-5,((Block) a).height-5);
 		    g2.setColor(Color.black);
 		    g2.drawString(((Block) a).name, ((Block) a).x+20 , ((Block) a).y +20);
-		    String mttf = String.valueOf(((Block) a).mttf); 
-		    String mttr = String.valueOf(((Block) a).mttr); 
-		    String verfügbarkeit = String.valueOf(((Block) a).verfügbarkeit);
-		    String zuverlässigkeit = String.valueOf(((Block) a).zuverlässigkeit);
+		    String mttf = String.valueOf(((Block) a).mttf).substring(0, Math.min(String.valueOf(((Block) a).mttf).length(), 5));
+		    String mttr = String.valueOf(((Block) a).mttr).substring(0, Math.min(String.valueOf(((Block) a).mttr).length(), 5));
+		    String verfügbarkeit = String.valueOf(((Block) a).verfügbarkeit).substring(0, Math.min(String.valueOf(((Block) a).verfügbarkeit).length(), 5));;
+		    String zuverlässigkeit = String.valueOf(((Block) a).zuverlässigkeit).substring(0, Math.min(String.valueOf(((Block) a).zuverlässigkeit).length(), 5));;
 		    
 		    g2.setColor(Color.black);
 		    g2.drawString("MTTF: "+mttf, (int) (((Block) a).x+((Block) a).width*0.2) , (int) ( ((Block) a).y +((Block) a).height*0.65));
@@ -127,16 +130,16 @@ class JCanvas extends JComponent
 			    g2.drawRect(((Rahmen) a).x, ((Rahmen) a).y, ((Rahmen) a).width, ((Rahmen) a).height);
 			    g2.drawString(((Rahmen) a).name, ((Rahmen) a).x+((Rahmen) a).width/2 , ((Rahmen) a).y +10);
 			    
-			    String mttf = String.valueOf(((Rahmen) a).mttf); 
-			    String mttr = String.valueOf(((Rahmen) a).mttr);
-			  String verfügbarkeit = String.valueOf(((Rahmen) a).verfügbarkeit);
-			  String zuverlässigkeit = String.valueOf(((Rahmen) a).zuverlässigkeit);
+			    String mttf = String.valueOf(((Rahmen) a).mttf).substring(0, Math.min(String.valueOf(((Rahmen) a).mttf).length(), 5));; 
+			    String mttr = String.valueOf(((Rahmen) a).mttr).substring(0, Math.min(String.valueOf(((Rahmen) a).mttr).length(), 5));;
+			  String verfügbarkeit = String.valueOf(((Rahmen) a).verfügbarkeit).substring(0, Math.min(String.valueOf(((Rahmen) a).verfügbarkeit).length(), 5));;
+			  String zuverlässigkeit = String.valueOf(((Rahmen) a).zuverlässigkeit).substring(0, Math.min(String.valueOf(((Rahmen) a).zuverlässigkeit).length(), 5));;
 			    g2.setColor(Color.black);
-			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9) , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -40);
+			    g2.drawString("MTTF: "+mttf, (int) (((Rahmen) a).x+((Rahmen) a).width)-120 , (int) ( ((Rahmen) a).y +((Rahmen) a).height) -40);
 			    g2.setColor(Color.black);
-			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height) - 30);
-			  g2.drawString("verfügbarkeit: "+verfügbarkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height)-20);
-			  g2.drawString("zuverlässigkeit: "+zuverlässigkeit, (int) (((Rahmen) a).x+((Rahmen) a).width*0.9), (int) (((Rahmen) a).y +((Rahmen) a).height)-10);
+			    g2.drawString("MTTR: "+mttr, (int) (((Rahmen) a).x+((Rahmen) a).width)-120, (int) (((Rahmen) a).y +((Rahmen) a).height) - 30);
+			  g2.drawString("verfügbarkeit: "+verfügbarkeit, (int) (((Rahmen) a).x+((Rahmen) a).width)-120, (int) (((Rahmen) a).y +((Rahmen) a).height)-20);
+			  g2.drawString("zuverlässigkeit: "+zuverlässigkeit, (int) (((Rahmen) a).x+((Rahmen) a).width)-120, (int) (((Rahmen) a).y +((Rahmen) a).height)-10);
 		  }
 		  
 	  }
@@ -373,6 +376,7 @@ class JCanvas extends JComponent
 			    	
 			        add(Eigenschaften); add(Aussehen); add(Struktur_hinzufuegen);add(Element_loeschen);
 			        if(MainClass.markedElement != null) {
+			        	   if(MainClass.markedElement.parent instanceof K_aus_N_struktur_gleichwertig)add(Element_hinzufuegen_darunter);
 			        	   if(MainClass.markedElement.parent instanceof Parallel_struktur)add(Element_hinzufuegen_darunter);
 					       if(MainClass.markedElement.parent instanceof Serielle_struktur)add(Element_hinzufuegen_dahinter);				        
 			        }
@@ -381,6 +385,7 @@ class JCanvas extends JComponent
 			        	Eigenschaften.addActionListener(this);
 			        	Aussehen.addActionListener(this);
 				        if(MainClass.markedElement != null) {
+				        	if(MainClass.markedElement.parent instanceof K_aus_N_struktur_gleichwertig)Element_hinzufuegen_darunter.addActionListener(this);
 				        	if(MainClass.markedElement.parent instanceof Serielle_struktur)Element_hinzufuegen_dahinter.addActionListener(this);
 				        	if(MainClass.markedElement.parent instanceof Parallel_struktur)Element_hinzufuegen_darunter.addActionListener(this);
 				        }				
@@ -433,17 +438,19 @@ class JCanvas extends JComponent
 				JMenuItem Element_hinzufuegen;
 			    JMenuItem par_Struktur_hinzufuegen;
 			    JMenuItem ser_Struktur_hinzufuegen;
-
+			    JMenuItem k_aus_n_Struktur_hinzufuegen;
 			    
 			    public DropDownMenuVoid(){
-			    	Element_hinzufuegen = new JMenuItem("Element hinzuf�gen");
-			    	par_Struktur_hinzufuegen = new JMenuItem("parallele Struktur hinzuf�gen");
-			    	ser_Struktur_hinzufuegen = new JMenuItem("serielle Struktur hinzuf�gen");
+			    	Element_hinzufuegen = new JMenuItem("Element hinzufügen");
+			    	par_Struktur_hinzufuegen = new JMenuItem("parallele Struktur hinzufügen");
+			    	ser_Struktur_hinzufuegen = new JMenuItem("serielle Struktur hinzufügen");
+			    	k_aus_n_Struktur_hinzufuegen = new JMenuItem("k aus n-Struktur hinzufuegen");
 			    	
-			    	add(Element_hinzufuegen); add(ser_Struktur_hinzufuegen); add(par_Struktur_hinzufuegen);
+			    	add(Element_hinzufuegen); add(ser_Struktur_hinzufuegen); add(par_Struktur_hinzufuegen); add(k_aus_n_Struktur_hinzufuegen);
 			    	Element_hinzufuegen.addActionListener(this);
 			    	par_Struktur_hinzufuegen.addActionListener(this);
 			    	ser_Struktur_hinzufuegen.addActionListener(this);
+			    	k_aus_n_Struktur_hinzufuegen.addActionListener(this);
 			     }    
 			    
 				@Override
@@ -456,6 +463,9 @@ class JCanvas extends JComponent
 					}
 					if(arg0.getSource() == par_Struktur_hinzufuegen) {
 						MainClass.paralleleStruktur_einf_kontextlos();
+					}
+					if(arg0.getSource() == k_aus_n_Struktur_hinzufuegen) {
+						MainClass.k_aus_n_Struktur_einf_kontextlos();
 					}
 				}
 			}
@@ -474,13 +484,16 @@ class JCanvas extends JComponent
 				JTextField editTextArea_mttr = new JTextField();
 				JTextField editTextArea_width = new JTextField();
 				JTextField editTextArea_heigth = new JTextField();
+				JTextField editTextArea_k = new JTextField();
 
 			
 				 //Kontextfenster Element
-					String name; double mttr; double mttf; int width; int heigth;
+					String name; double mttr; double mttf; int width; int heigth; int k;
 				
 				public Eigenschaftenfenster_struktur() {
-					sr = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					//sr = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, MainFrame.posX, MainFrame.posY);
+					sr = MainClass.markedStruktur;
+					System.out.println("eigenschaften: "+sr.name);
 					if(sr == null) return;
 
 					this.setTitle("Eigenschaften: "+sr.name);
@@ -515,16 +528,23 @@ class JCanvas extends JComponent
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
 					cp.add(editTextArea_mttr);		
 					
-					editTextArea_heigth= new JTextField(Integer.valueOf(String.valueOf(sr.rahmen.height)));
+					editTextArea_heigth= new JTextField(String.valueOf(sr.rahmen.height));
 					editTextArea_heigth.setHorizontalAlignment(SwingConstants.LEFT);
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
 					cp.add(editTextArea_heigth);		
 					
-					editTextArea_width= new JTextField(Integer.valueOf(String.valueOf(sr.rahmen.width)));
+					editTextArea_width= new JTextField(String.valueOf(sr.rahmen.width));
 					editTextArea_width.setHorizontalAlignment(SwingConstants.LEFT);
 					//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
 					cp.add(editTextArea_width);		
 					this.setVisible(true);
+					
+					if(sr instanceof K_aus_N_struktur_gleichwertig) {
+						editTextArea_k= new JTextField(String.valueOf(sr.rahmen.k));
+						editTextArea_k.setHorizontalAlignment(SwingConstants.LEFT);
+						//editTextArea_mttr.setMaximumSize(new Dimension(200, 40));
+						cp.add(editTextArea_k);	
+					}
 					
 					editTextArea_name.addActionListener(new ActionListener() {
 						@Override
@@ -561,7 +581,17 @@ class JCanvas extends JComponent
 							MainClass.aendereEigenschaften(sr);
 						}
 					});
-					
+					if(editTextArea_k != null) {
+						editTextArea_k.addActionListener(new ActionListener() {
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								// TODO Auto-generated method stub
+								((K_aus_N_struktur_gleichwertig) sr).rahmen.k = Integer.valueOf(editTextArea_k.getText());
+								MainClass.aendereEigenschaften(sr);
+							}
+						});
+					}
 				}
 				
 				
@@ -582,6 +612,7 @@ class JCanvas extends JComponent
 				JMenuItem Element_Einfügen;
 				JMenuItem serielle_Struktur_Einfügen;
 				JMenuItem paralle_Struktur_Einfügen;
+				JMenuItem k_aus_n_Struktur_Einfügen;
 				Eigenschaftenfenster_struktur eig_fenster;
 				JMenuItem Struktur_Löschen;
 				
@@ -591,9 +622,10 @@ class JCanvas extends JComponent
 					 serielle_Struktur_Einfügen = new JMenuItem("serielle Struktur Einfügen");
 					 paralle_Struktur_Einfügen = new JMenuItem("parallele Struktur Einfügen");
 					 Struktur_Löschen = new JMenuItem("Struktur Löschen");
+					 k_aus_n_Struktur_Einfügen = new JMenuItem("k aus n-Struktur Einfügen");
 
-					 add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen); add(serielle_Struktur_Einfügen); add(paralle_Struktur_Einfügen);
-					 Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  serielle_Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this); paralle_Struktur_Einfügen.addActionListener(this);
+					 add(k_aus_n_Struktur_Einfügen); add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen); add(serielle_Struktur_Einfügen); add(paralle_Struktur_Einfügen);
+					 k_aus_n_Struktur_Einfügen.addActionListener(this);Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  serielle_Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this); paralle_Struktur_Einfügen.addActionListener(this);
 					
 				 }
 
@@ -611,13 +643,19 @@ class JCanvas extends JComponent
 						if(zeiger instanceof Parallel_struktur) {
 							MainClass.paralleleStruktur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (Parallel_struktur) zeiger);
 						}
+						if(zeiger instanceof K_aus_N_struktur_gleichwertig) {
+							MainClass.K_aus_NStrutur_erweitern("neues Element", 1.0, 1.0,  MainFrame.posX,  MainFrame.posX, (K_aus_N_struktur_gleichwertig) zeiger);
+						}
+						
 					}
-					//TODO Struktur_Einfügen implementieren
 					if(arg0.getSource() == serielle_Struktur_Einfügen) {
 						MainClass.serielleStruktur_einf(MainFrame.posX, MainFrame.posY);
 					}
 					if(arg0.getSource() == paralle_Struktur_Einfügen) {
 						MainClass.paralleleStruktur_einf_(MainFrame.posX, MainFrame.posY);
+					}
+					if(arg0.getSource() == k_aus_n_Struktur_Einfügen) {
+						MainClass.k_aus_nStruktur_einf_(MainFrame.posX, MainFrame.posY);
 					}
 					if(arg0.getSource() == Struktur_Löschen) {
 						MainClass.strukturLöschen(MainFrame.posX, MainFrame.posY);
@@ -713,15 +751,15 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	public void mouseClicked(MouseEvent arg0) {
 		if(SwingUtilities.isLeftMouseButton(arg0)) {
 			//System.out.println("leftclick");
-			Element sucheElement =Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, posX, posY);
+			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
 			if(!(sucheElement == null)) {
 				//System.out.println("Element mauszeiger: "+sucheElement.name);
 				MainClass.elementMarkieren(sucheElement);
 			}
 			else if(sucheElement == null) {
-				Struktur sucheStruktur = Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY);
+				Struktur sucheStruktur = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, posX, posY);
 				if(sucheStruktur != null) {
-					if(sucheStruktur.equals(MainClass.mc.bd.anfang))System.out.println("anfang");
+					if(sucheStruktur.equals(Blockdiagramm.anfang))System.out.println("anfang");
 					else {
 						//System.out.println("Struktur mauszeiger: "+sucheStruktur.name);
 						MainClass.strukturMarkieren(sucheStruktur);
@@ -731,19 +769,19 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 			}
 		}
 		if(SwingUtilities.isRightMouseButton(arg0)) {
-			Element sucheElement =Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, posX, posY);
-			Struktur sucheStruktur = Blockdiagramm.sucheStruktur(MainClass.mc.bd.anfang, posX, posY);
+			Element sucheElement =Blockdiagramm.sucheElement(Blockdiagramm.anfang, posX, posY);
+			Struktur sucheStruktur = Blockdiagramm.sucheStruktur(Blockdiagramm.anfang, posX, posY);
 			Element vergleich = MainClass.markedElement;
 			if(!(sucheElement == null)) {
 				if(!(vergleich == null)) {
 					if(vergleich == sucheElement) {					
 //TODO: funzt? dann entsprechende fkt in mc Löschen!						//MainClass.elementDropDownMenu(arg0.getX(), arg0.getY(), arg0);
-						MainClass.markedElement =  Blockdiagramm.sucheElement(MainClass.mc.bd.anfang, arg0.getX(), arg0.getY());
+						MainClass.markedElement =  Blockdiagramm.sucheElement(Blockdiagramm.anfang, arg0.getX(), arg0.getY());
 						pop_ddme(arg0);
 					}
 				}
 			}
-			else if(sucheStruktur != null && !sucheStruktur.equals(MainClass.mc.bd.anfang)) {
+			else if(sucheStruktur != null && !sucheStruktur.equals(Blockdiagramm.anfang)) {
 				System.out.println("Struktur ausgew�hlt: "+sucheStruktur.name);
 				if(MainClass.markedStruktur != null) {
 					pop_ddms(arg0);
