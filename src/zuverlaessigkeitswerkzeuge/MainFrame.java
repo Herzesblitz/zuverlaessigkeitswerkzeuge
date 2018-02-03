@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import sun.applet.Main;
+
 
 
 //import sun.awt.RepaintArea;

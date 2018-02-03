@@ -32,7 +32,7 @@ public class MainClass{
 	
 	Blockdiagramm bd = new Blockdiagramm();
 	static MainFrame mf = new MainFrame();
-	static MainClass mc = new MainClass();;
+	static MainClass mc = new MainClass();
 
 	public static void main(String[] args) {
 		mf.init_frame();
