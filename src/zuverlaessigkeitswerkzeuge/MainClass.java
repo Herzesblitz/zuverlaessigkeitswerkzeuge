@@ -662,7 +662,6 @@ public class MainClass{
 					    MainFrame.jc.zeichnen.remove(((Element) S).block);		
 					}
 					//for(_2DObject a: MainFrame.jc.zeichnen)System.out.println("A eingetragen: "+a.toString());
-					
 				}
 			
 		

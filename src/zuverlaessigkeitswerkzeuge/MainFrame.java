@@ -174,7 +174,7 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Aussehen ver�ndern: H�he, Breite, Farbe");
+					JLabel label=new JLabel("Aussehen ver�ndern: Höhe, Breite, Farbe");
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -262,7 +262,7 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Eigenschaften ver�ndern: Name, MTTF, MTTR");
+					JLabel label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR");
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -505,7 +505,10 @@ class JCanvas extends JComponent
 					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 					
 					//INPUT TEXT AREA
-					JLabel label=new JLabel("Eigenschaften ver�ndern: Name, MTTF, MTTR");
+					JLabel label;
+					if(sr instanceof K_aus_N_struktur_gleichwertig)label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR, Höhe, Breite, k");
+					else label=new JLabel("Eigenschaften verändern: Name, MTTF, MTTR, Höhe, Breite");
+
 					label.setSize(100, 100);
 					
 					BoxLayout layout = new BoxLayout(cp, BoxLayout.Y_AXIS);
@@ -623,8 +626,8 @@ class JCanvas extends JComponent
 					 Struktur_Löschen = new JMenuItem("Struktur Löschen");
 					 k_aus_n_Struktur_Einfügen = new JMenuItem("k aus n-Struktur Einfügen");
 
-					 add(k_aus_n_Struktur_Einfügen); add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen); add(serielle_Struktur_Einfügen); add(paralle_Struktur_Einfügen);
-					 k_aus_n_Struktur_Einfügen.addActionListener(this);Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  serielle_Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this); paralle_Struktur_Einfügen.addActionListener(this);
+					 add(Struktureigenschaften); add(Element_Einfügen);	 add(Element_Einfügen); add(Struktur_Löschen); add(serielle_Struktur_Einfügen); add(paralle_Struktur_Einfügen); add(k_aus_n_Struktur_Einfügen);
+					 Struktureigenschaften.addActionListener(this); Element_Einfügen.addActionListener(this);  serielle_Struktur_Einfügen.addActionListener(this); Struktur_Löschen.addActionListener(this); paralle_Struktur_Einfügen.addActionListener(this); k_aus_n_Struktur_Einfügen.addActionListener(this);
 					
 				 }
 
