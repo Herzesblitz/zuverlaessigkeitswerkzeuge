@@ -32,7 +32,7 @@ public class MainClass{
 	
 	Blockdiagramm bd = new Blockdiagramm();
 	static MainFrame mf = new MainFrame();
-	static MainClass mc = new MainClass();;
+	static MainClass mc = new MainClass();
 
 	public static void main(String[] args) {
 		mf.init_frame();
@@ -662,7 +662,6 @@ public class MainClass{
 					    MainFrame.jc.zeichnen.remove(((Element) S).block);		
 					}
 					//for(_2DObject a: MainFrame.jc.zeichnen)System.out.println("A eingetragen: "+a.toString());
-					
 				}
 			
 		
