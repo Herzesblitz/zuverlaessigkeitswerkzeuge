@@ -695,11 +695,11 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 			Dimension aufloesung= Toolkit.getDefaultToolkit().getScreenSize();
 
 			//System.out.println(aufloesung.width+" "+aufloesung.height);
-			frame.setTitle("zuverlässigkeitswerkzeuge");
+			frame.setTitle("EPRAHS");
 			frame.setResizable(true);
 			frame.setLocation(0, 0);
 			frame.setVisible(true);	 frame.pack();	
-			frame.setSize(700,700);
+			frame.setSize(aufloesung.width, aufloesung.height);
 			
 			frame.addMouseMotionListener(this);
 			frame.addMouseListener(this);
