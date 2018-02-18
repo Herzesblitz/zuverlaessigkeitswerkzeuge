@@ -24,7 +24,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import sun.applet.Main;
 
 
 
@@ -684,12 +683,12 @@ public class MainFrame  extends JFrame implements MouseMotionListener, MouseList
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		//frame.init_frame();
+		frame.init_frame();
 		
 		//System.out.println("test");
 		
-		//frame.test(); 
-		//frame.zeichneObjekte(frame.jc);
+		frame.test(); 
+		frame.zeichneObjekte(frame.jc);
 	}
 	
 	public MainFrame() {
